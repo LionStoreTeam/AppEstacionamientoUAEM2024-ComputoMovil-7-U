@@ -1,4 +1,4 @@
-import 'package:estacionamiento_uaem/api/map.dart';
+import 'package:estacionamiento_uaem/screens/disponibilidad_screen.dart';
 import 'package:flutter/material.dart';
 // import 'package:gap/gap.dart';
 
@@ -100,12 +100,12 @@ class _AdministrativosScreenState extends State<AdministrativosScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const MapEstacionamiento()));
+                          builder: (context) => const DisponibilidadScreen()));
                 },
                 icon: const Icon(Icons.remove_red_eye_outlined,
                     color: Colors.white),
                 label: const Text(
-                  "Mostrar Mapa",
+                  "Ver Disponibilidad",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 22,

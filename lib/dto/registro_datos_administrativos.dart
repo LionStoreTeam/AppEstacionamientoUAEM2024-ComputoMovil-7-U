@@ -1,17 +1,20 @@
 // import 'package:firebase_auth/firebase_auth.dart';
+import 'package:estacionamiento_uaem/login/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class UserScreen extends StatefulWidget {
-  const UserScreen({Key? key}) : super(key: key);
+class RegistroDatosAdministrativos extends StatefulWidget {
+  const RegistroDatosAdministrativos({Key? key}) : super(key: key);
 
   @override
-  State<UserScreen> createState() => _UserScreenState();
+  State<RegistroDatosAdministrativos> createState() =>
+      _RegistroDatosAdministrativosState();
 }
 
-class _UserScreenState extends State<UserScreen> {
+class _RegistroDatosAdministrativosState
+    extends State<RegistroDatosAdministrativos> {
   @override
   void initState() {
     super.initState();
@@ -20,35 +23,30 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   // final User? user = FirebaseAuth.instance.currentUser;
-  TextEditingController calleController = TextEditingController();
-  TextEditingController coloniaController = TextEditingController();
-  TextEditingController numInteriorController = TextEditingController();
-  TextEditingController codigoPostalController = TextEditingController();
-  TextEditingController ciudadController = TextEditingController();
-  TextEditingController estadoController = TextEditingController();
+  TextEditingController nombrePropietario = TextEditingController();
+  TextEditingController modeloDelCarroMoto = TextEditingController();
+  // TextEditingController numInteriorController = TextEditingController();
+  // TextEditingController codigoPostalController = TextEditingController();
+  TextEditingController placasDelCarroMoto = TextEditingController();
+  TextEditingController colorDelCarroMoto = TextEditingController();
   TextEditingController telefonoController = TextEditingController();
-  TextEditingController nombreController = TextEditingController();
-  TextEditingController correoController = TextEditingController();
+  TextEditingController nombreController =
+      TextEditingController(); // nombre registrado con la cuenta
+  // TextEditingController correoController = TextEditingController();
 
   bool isEditing = false;
   bool hasChanges = false; // Nueva variable para rastrear cambios
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // Cargar los datos guardados al inicio de la pantalla
-  // }
 
   // Método para cargar los datos guardados en SharedPreferences
   void loadSavedData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      calleController.text = prefs.getString('calle') ?? '';
-      coloniaController.text = prefs.getString('colonia') ?? '';
-      numInteriorController.text = prefs.getString('numInterior') ?? '';
-      codigoPostalController.text = prefs.getString('codigoPostal') ?? '';
-      ciudadController.text = prefs.getString('ciudad') ?? '';
-      estadoController.text = prefs.getString('estado') ?? '';
+      nombrePropietario.text = prefs.getString('nombrePropietario') ?? '';
+      modeloDelCarroMoto.text = prefs.getString('modeloCarroMoto') ?? '';
+      // numInteriorController.text = prefs.getString('numInterior') ?? '';
+      // codigoPostalController.text = prefs.getString('codigoPostal') ?? '';
+      placasDelCarroMoto.text = prefs.getString('placasCarroMoto') ?? '';
+      colorDelCarroMoto.text = prefs.getString('colorCarroMoto') ?? '';
       telefonoController.text = prefs.getString('telefono') ?? '';
       // nombreController.text = user?.displayName ?? '';
       // correoController.text = user?.email ?? '';
@@ -63,10 +61,10 @@ class _UserScreenState extends State<UserScreen> {
     return double.tryParse(value) != null;
   }
 
-// Método para validar el código postal
-  bool isPostalCodeValid(String value) {
-    return value.length == 5 && isNumeric(value);
-  }
+// // Método para validar el código postal
+//   bool isPostalCodeValid(String value) {
+//     return value.length == 5 && isNumeric(value);
+//   }
 
   // Método para validar el número de Teléfono
   bool isTelefonoCodeValid(String value) {
@@ -75,48 +73,59 @@ class _UserScreenState extends State<UserScreen> {
 
 // Método para validar si los campos están vacíos
   bool areFieldsEmpty() {
-    return calleController.text.isEmpty ||
-        coloniaController.text.isEmpty ||
-        numInteriorController.text.isEmpty ||
-        !isPostalCodeValid(codigoPostalController.text) ||
-        ciudadController.text.isEmpty ||
-        estadoController.text.isEmpty ||
+    return nombrePropietario.text.isEmpty ||
+        modeloDelCarroMoto.text.isEmpty ||
+        // numInteriorController.text.isEmpty ||
+        // !isPostalCodeValid(codigoPostalController.text) ||
+        placasDelCarroMoto.text.isEmpty ||
+        colorDelCarroMoto.text.isEmpty ||
         !isTelefonoCodeValid(telefonoController.text);
   }
 
   // Nueva variable para rastrear si todos los campos están vacíos
   bool areAllFieldsEmpty() {
-    return calleController.text.isEmpty &&
-        coloniaController.text.isEmpty &&
-        numInteriorController.text.isEmpty &&
-        codigoPostalController.text.isEmpty &&
-        ciudadController.text.isEmpty &&
-        estadoController.text.isEmpty &&
+    return nombrePropietario.text.isEmpty &&
+        modeloDelCarroMoto.text.isEmpty &&
+        // numInteriorController.text.isEmpty &&
+        // codigoPostalController.text.isEmpty &&
+        placasDelCarroMoto.text.isEmpty &&
+        colorDelCarroMoto.text.isEmpty &&
         telefonoController.text.isEmpty;
+  }
+
+  // Nueva variable para rastrear si todos los campos están llenos
+  bool areAllFieldsNotEmpty() {
+    return nombrePropietario.text.isNotEmpty &&
+        modeloDelCarroMoto.text.isNotEmpty &&
+        // numInteriorController.text.isNotEmpty &&
+        // codigoPostalController.text.isNotEmpty &&
+        placasDelCarroMoto.text.isNotEmpty &&
+        colorDelCarroMoto.text.isNotEmpty &&
+        telefonoController.text.isNotEmpty;
   }
 
   // Método para guardar los datos en SharedPreferences
   void saveData() async {
     // Validar que los campos numéricos solo contengan números
-    if (!isNumeric(numInteriorController.text)) {
-      Fluttertoast.showToast(
-        msg: 'El Número Interior solo deben contener números',
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+    // if (!isNumeric(numInteriorController.text)) {
+    //   Fluttertoast.showToast(
+    //     msg: 'El Número Interior solo deben contener números',
+    //     backgroundColor: Colors.red,
+    //     textColor: Colors.white,
+    //   );
 
-      return;
-    }
+    //   return;
+    // }
 
-    // Validar el código postal
-    if (!isPostalCodeValid(codigoPostalController.text)) {
-      Fluttertoast.showToast(
-        msg: 'El Código postal debe ser de 5 dígitos',
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
-      return;
-    }
+    // // Validar el código postal
+    // if (!isPostalCodeValid(codigoPostalController.text)) {
+    //   Fluttertoast.showToast(
+    //     msg: 'El Código postal debe ser de 5 dígitos',
+    //     backgroundColor: Colors.red,
+    //     textColor: Colors.white,
+    //   );
+    //   return;
+    // }
 
     // Validar que los campos numéricos solo contengan números
     if (!isTelefonoCodeValid(telefonoController.text)) {
@@ -135,13 +144,14 @@ class _UserScreenState extends State<UserScreen> {
       );
       return;
     }
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('calle', calleController.text);
-    prefs.setString('colonia', coloniaController.text);
-    prefs.setString('numInterior', numInteriorController.text);
-    prefs.setString('codigoPostal', codigoPostalController.text);
-    prefs.setString('ciudad', ciudadController.text);
-    prefs.setString('estado', estadoController.text);
+    prefs.setString('nombrePropietario', nombrePropietario.text);
+    prefs.setString('modeloCarroMoto', modeloDelCarroMoto.text);
+    // prefs.setString('numInterior', numInteriorController.text);
+    // prefs.setString('codigoPostal', codigoPostalController.text);
+    prefs.setString('placasCarroMoto', placasDelCarroMoto.text);
+    prefs.setString('colorCarroMoto', colorDelCarroMoto.text);
     prefs.setString('telefono', telefonoController.text);
 
     // Muestra el Toast al guardar si hay cambios
@@ -171,23 +181,39 @@ class _UserScreenState extends State<UserScreen> {
   void clearData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      calleController.text = '';
-      coloniaController.text = '';
-      numInteriorController.text = '';
-      codigoPostalController.text = '';
-      ciudadController.text = '';
-      estadoController.text = '';
+      nombrePropietario.text = '';
+      modeloDelCarroMoto.text = '';
+      // numInteriorController.text = '';
+      // codigoPostalController.text = '';
+      placasDelCarroMoto.text = '';
+      colorDelCarroMoto.text = '';
       telefonoController.text = '';
     });
 
     // Borrar los datos almacenados en SharedPreferences
-    prefs.remove('calle');
-    prefs.remove('colonia');
-    prefs.remove('numInterior');
-    prefs.remove('codigoPostal');
-    prefs.remove('ciudad');
-    prefs.remove('estado');
+    prefs.remove('nombrePropietario');
+    prefs.remove('modeloCarroMoto');
+    // prefs.remove('numInterior');
+    // prefs.remove('codigoPostal');
+    prefs.remove('placasCarroMoto');
+    prefs.remove('colorCarroMoto');
     prefs.remove('telefono');
+  }
+
+  void continuar() {
+    // Validar que los campos numéricos solo contengan números
+    if (!isTelefonoCodeValid(telefonoController.text)) {
+      Fluttertoast.showToast(
+        msg: 'El Número de Teléfono debe ser de 10 dígitos',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+      return;
+    } else {
+      saveData();
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+    }
   }
 
   @override
@@ -215,7 +241,7 @@ class _UserScreenState extends State<UserScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Datos Usuario"),
+        title: const Text("Datos Administrativos"),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -235,12 +261,9 @@ class _UserScreenState extends State<UserScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ... Otros widgets existentes ...
-              // CircleAvatar para la imagen del usuario
               Container(
                 height: 200,
                 decoration: const BoxDecoration(
@@ -257,13 +280,13 @@ class _UserScreenState extends State<UserScreen> {
               //     "Correo", correoController, user?.email ?? ''),
 
               // TextFields para la información de dirección y teléfono
-              buildTextField("Nombre del Propietario", calleController),
-              buildTextField("Número de Placas", coloniaController),
-              buildTextField("Número de Matricula", numInteriorController),
-              buildTextField(
-                  "Código Postal - 5 Dígitos", codigoPostalController),
-              buildTextField("Modelo de Auto/Moto", ciudadController),
-              buildTextField("Color de Auto/Moto", estadoController),
+              buildTextField("Nombre del Propietario", nombrePropietario),
+              buildTextField("Modelo del Auto/Moto", modeloDelCarroMoto),
+              // buildTextField("Número de Matricula", numInteriorController),
+              // buildTextField(
+              //     "Código Postal - 5 Dígitos", codigoPostalController),
+              buildTextField("Placas de Auto/Moto", placasDelCarroMoto),
+              buildTextField("Color de Auto/Moto", colorDelCarroMoto),
               buildTextField("Teléfono", telefonoController),
 
               const SizedBox(height: 20),
@@ -274,34 +297,54 @@ class _UserScreenState extends State<UserScreen> {
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: Colors.red.shade500,
                     ),
                     onPressed: isEditing ? () => saveData() : null,
-                    child: const Text('Guardar'),
+                    child: const Text(
+                      'Guardar',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                   const SizedBox(width: 10),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: Colors.red.shade500,
                     ),
                     onPressed: () {
                       setState(() {
                         isEditing = true;
                       });
                     },
-                    child: const Text('Editar'),
+                    child: const Text(
+                      'Editar',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                   const Gap(10),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: Colors.red.shade500,
                     ),
                     onPressed: areAllFieldsEmpty()
                         ? null
                         : clearData, // Deshabilitar si todos los campos están vacíos
-                    child: const Text('Restablecer'),
+                    child: const Text(
+                      'Restablecer',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
+              ),
+              const Gap(10),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red.shade500,
+                ),
+                onPressed: areAllFieldsNotEmpty() ? continuar : null,
+                child: const Text(
+                  'Continuar',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -321,7 +364,7 @@ class _UserScreenState extends State<UserScreen> {
       },
       decoration: InputDecoration(
         labelText: labelText,
-        hintText: 'Ingrese su $labelText',
+        hintText: 'Ingrese $labelText',
       ),
     );
   }

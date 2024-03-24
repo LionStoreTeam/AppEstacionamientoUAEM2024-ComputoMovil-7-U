@@ -23,3 +23,6 @@ REQUERIMIENTO FUNCIONAL 3 (RQF03)
     3.2 Genera ticket (Genera el precio). →
     3.3 Coloca el mapa (funciona el mapa). →
     3.4 Coloca los espacios disponibles. →
+
+
+    https://www.youtube.com/watch?v=YVYIPIow418

@@ -1,4 +1,4 @@
-import 'package:estacionamiento_uaem/data/user_screen.dart';
+import 'package:estacionamiento_uaem/dto/registro_datos_administrativos.dart';
 import 'package:estacionamiento_uaem/screens/administrativos_screen.dart';
 import 'package:estacionamiento_uaem/screens/alumnos_screen.dart';
 import 'package:flutter/material.dart';
@@ -70,128 +70,147 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          children: [
-            Container(
-              height: 200,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/park_sinfondo.png"),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            const Gap(40),
-            Container(
-              decoration: const BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: Colors.black87,
-                    width: 3,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            children: [
+              Container(
+                height: 200,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/park_sinfondo.png"),
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
-              child: const Text(
-                "Ingresar",
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
+              const Gap(40),
+              Container(
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Colors.black87,
+                      width: 3,
+                    ),
+                  ),
+                ),
+                child: const Text(
+                  "Ingresar",
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-            const Gap(60),
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                    _adminEnabled ? Colors.red.shade400 : Colors.grey),
-              ),
-              onPressed: _adminEnabled
-                  ? () {
-                      _disableButtons('admin');
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AdministrativosScreen(),
-                        ),
-                      );
-                    }
-                  : null,
-              child: Text(
-                "Soy Administrativo",
-                style: TextStyle(
+              const Gap(60),
+              ElevatedButton.icon(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                      _adminEnabled ? Colors.red.shade400 : Colors.grey),
+                ),
+                onPressed: _adminEnabled
+                    ? () {
+                        _disableButtons('admin');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AdministrativosScreen(),
+                          ),
+                        );
+                      }
+                    : null,
+                label: Text(
+                  "Soy Administrativo",
+                  style: TextStyle(
+                    color: Colors.red.shade50,
+                    fontSize: 22,
+                  ),
+                ),
+                icon: Icon(
+                  Icons.text_snippet_outlined,
                   color: Colors.red.shade50,
-                  fontSize: 22,
                 ),
               ),
-            ),
-            const Gap(30),
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                    _teacherEnabled ? Colors.red.shade400 : Colors.grey),
-              ),
-              onPressed: _teacherEnabled
-                  ? () {
-                      _disableButtons('teacher');
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const UserScreen(),
-                        ),
-                      );
-                    }
-                  : null,
-              child: Text(
-                "Soy Maestro",
-                style: TextStyle(
+              const Gap(30),
+              ElevatedButton.icon(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                      _teacherEnabled ? Colors.red.shade400 : Colors.grey),
+                ),
+                onPressed: _teacherEnabled
+                    ? () {
+                        _disableButtons('teacher');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const RegistroDatosAdministrativos(),
+                          ),
+                        );
+                      }
+                    : null,
+                label: Text(
+                  "Soy Maestro",
+                  style: TextStyle(
+                    color: Colors.red.shade50,
+                    fontSize: 22,
+                  ),
+                ),
+                icon: Icon(
+                  Icons.border_color_outlined,
                   color: Colors.red.shade50,
-                  fontSize: 22,
                 ),
               ),
-            ),
-            const Gap(30),
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                    _studentEnabled ? Colors.red.shade400 : Colors.grey),
-              ),
-              onPressed: _studentEnabled
-                  ? () {
-                      _disableButtons('student');
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AlumnosScreen(),
-                        ),
-                      );
-                    }
-                  : null,
-              child: Text(
-                "Soy Alumno",
-                style: TextStyle(
+              const Gap(30),
+              ElevatedButton.icon(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                      _studentEnabled ? Colors.red.shade400 : Colors.grey),
+                ),
+                onPressed: _studentEnabled
+                    ? () {
+                        _disableButtons('student');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AlumnosScreen(),
+                          ),
+                        );
+                      }
+                    : null,
+                label: Text(
+                  "Soy Alumno",
+                  style: TextStyle(
+                    color: Colors.red.shade50,
+                    fontSize: 22,
+                  ),
+                ),
+                icon: Icon(
+                  Icons.school_outlined,
                   color: Colors.red.shade50,
-                  fontSize: 22,
                 ),
               ),
-            ),
-            const Gap(30),
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.red.shade400),
-              ),
-              onPressed: _resetButtons,
-              child: Text(
-                "Restablecer",
-                style: TextStyle(
+              const Gap(30),
+              ElevatedButton.icon(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.black87),
+                ),
+                onPressed: _resetButtons,
+                label: Text(
+                  "Restablecer",
+                  style: TextStyle(
+                    color: Colors.red.shade50,
+                    fontSize: 22,
+                  ),
+                ),
+                icon: Icon(
+                  Icons.replay_sharp,
                   color: Colors.red.shade50,
-                  fontSize: 22,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

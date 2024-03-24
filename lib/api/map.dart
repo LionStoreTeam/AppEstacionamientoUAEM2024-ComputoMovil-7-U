@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:estacionamiento_uaem/screens/login_screen.dart';
+import 'package:estacionamiento_uaem/login/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -42,7 +42,7 @@ class MapEstacionamientoState extends State<MapEstacionamiento> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const LoginScreen()));
+                        builder: (context) => const HomeScreen()));
               },
             );
           },

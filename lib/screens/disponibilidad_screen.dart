@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:estacionamiento_uaem/api/map.dart';
-import 'package:estacionamiento_uaem/screens/login_screen.dart';
+import 'package:estacionamiento_uaem/login/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -90,7 +90,7 @@ class _DisponibilidadScreenState extends State<DisponibilidadScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const LoginScreen()));
+                        builder: (context) => const HomeScreen()));
               },
               child: const Text(
                 "Salir",
@@ -123,7 +123,6 @@ class _DisponibilidadScreenState extends State<DisponibilidadScreen> {
   Widget build(BuildContext context) {
     String formattedTime = getFormattedTime();
     return Scaffold(
-      backgroundColor: Colors.white70,
       appBar: AppBar(
         title: const Text("Disponibilidad"),
         centerTitle: true,

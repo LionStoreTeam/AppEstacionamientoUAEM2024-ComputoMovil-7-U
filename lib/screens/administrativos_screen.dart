@@ -15,17 +15,24 @@ class _AdministrativosScreenState extends State<AdministrativosScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFd9e6ed),
       extendBodyBehindAppBar: false,
       appBar: AppBar(
-        title: const Text("Bienvenido Administrativo"),
+        title: const Text(
+          "Bienvenido Administrativo",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.7,
+          ),
+        ),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.indigo.shade600,
+        backgroundColor: Colors.red.shade700,
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
               icon: const Icon(Icons.arrow_back_sharp),
+              color: Colors.white,
               onPressed: () => Navigator.of(context).pop(),
             );
           },
@@ -39,8 +46,8 @@ class _AdministrativosScreenState extends State<AdministrativosScreen> {
               height: 200,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage("assets/park2.png"),
-                  fit: BoxFit.fill,
+                  image: AssetImage("assets/park_sinfondo.png"),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),

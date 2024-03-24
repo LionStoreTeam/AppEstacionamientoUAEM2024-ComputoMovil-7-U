@@ -1,4 +1,5 @@
 import 'package:estacionamiento_uaem/dto/registro_datos_administrativos.dart';
+import 'package:estacionamiento_uaem/dto/shared_preferences_helper.dart';
 import 'package:estacionamiento_uaem/screens/administrativos_screen.dart';
 import 'package:estacionamiento_uaem/screens/alumnos_screen.dart';
 import 'package:flutter/material.dart';
@@ -23,9 +24,24 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadButtonStates();
+    super.initState();
+    SharedPreferencesHelper.loadSavedData(nombrePropietario, modeloDelCarroMoto,
+        placasDelCarroMoto, colorDelCarroMoto, telefonoController);
     // Cargar el estado del botón "Restablecer" al inicio de la pantalla
     _loadResetButtonState();
   }
+
+  // final User? user = FirebaseAuth.instance.currentUser;
+  TextEditingController nombrePropietario = TextEditingController();
+  TextEditingController modeloDelCarroMoto = TextEditingController();
+  // TextEditingController numInteriorController = TextEditingController();
+  // TextEditingController codigoPostalController = TextEditingController();
+  TextEditingController placasDelCarroMoto = TextEditingController();
+  TextEditingController colorDelCarroMoto = TextEditingController();
+  TextEditingController telefonoController = TextEditingController();
+  TextEditingController nombreController =
+      TextEditingController(); // nombre registrado con la cuenta
+  // TextEditingController correoController = TextEditingController();
 
   void _loadButtonStates() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -196,7 +212,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.black87),
                 ),
-                onPressed: _resetButtons,
+                onPressed: () {
+                  clearData();
+                  _resetButtons();
+                },
                 label: Text(
                   "Restablecer",
                   style: TextStyle(
@@ -231,6 +250,17 @@ class _HomeScreenState extends State<HomeScreen> {
         _studentEnabled = false;
         prefs.setBool('studentEnabled', _studentEnabled);
       }
+    });
+  }
+
+  void clearData() {
+    SharedPreferencesHelper.clearData();
+    setState(() {
+      nombrePropietario.text = '';
+      modeloDelCarroMoto.text = '';
+      placasDelCarroMoto.text = '';
+      colorDelCarroMoto.text = '';
+      telefonoController.text = '';
     });
   }
 

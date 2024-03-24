@@ -1,4 +1,5 @@
 // import 'package:firebase_auth/firebase_auth.dart';
+import 'package:estacionamiento_uaem/dto/shared_preferences_helper.dart';
 import 'package:estacionamiento_uaem/login/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -18,8 +19,8 @@ class _RegistroDatosAdministrativosState
   @override
   void initState() {
     super.initState();
-    //   // Cargar los datos guardados al inicio de la pantalla
-    loadSavedData();
+    SharedPreferencesHelper.loadSavedData(nombrePropietario, modeloDelCarroMoto,
+        placasDelCarroMoto, colorDelCarroMoto, telefonoController);
   }
 
   // final User? user = FirebaseAuth.instance.currentUser;
@@ -145,14 +146,8 @@ class _RegistroDatosAdministrativosState
       return;
     }
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('nombrePropietario', nombrePropietario.text);
-    prefs.setString('modeloCarroMoto', modeloDelCarroMoto.text);
-    // prefs.setString('numInterior', numInteriorController.text);
-    // prefs.setString('codigoPostal', codigoPostalController.text);
-    prefs.setString('placasCarroMoto', placasDelCarroMoto.text);
-    prefs.setString('colorCarroMoto', colorDelCarroMoto.text);
-    prefs.setString('telefono', telefonoController.text);
+    SharedPreferencesHelper.saveData(nombrePropietario, modeloDelCarroMoto,
+        placasDelCarroMoto, colorDelCarroMoto, telefonoController);
 
     // Muestra el Toast al guardar si hay cambios
     if (hasChanges) {
@@ -178,26 +173,15 @@ class _RegistroDatosAdministrativosState
   }
 
   // Método para limpiar los datos de los TextField y SharedPreferences
-  void clearData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  void clearData() {
+    SharedPreferencesHelper.clearData();
     setState(() {
       nombrePropietario.text = '';
       modeloDelCarroMoto.text = '';
-      // numInteriorController.text = '';
-      // codigoPostalController.text = '';
       placasDelCarroMoto.text = '';
       colorDelCarroMoto.text = '';
       telefonoController.text = '';
     });
-
-    // Borrar los datos almacenados en SharedPreferences
-    prefs.remove('nombrePropietario');
-    prefs.remove('modeloCarroMoto');
-    // prefs.remove('numInterior');
-    // prefs.remove('codigoPostal');
-    prefs.remove('placasCarroMoto');
-    prefs.remove('colorCarroMoto');
-    prefs.remove('telefono');
   }
 
   void continuar() {
@@ -241,16 +225,19 @@ class _RegistroDatosAdministrativosState
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Datos Administrativos"),
+        title: const Text(
+          "Datos Administrativos",
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.red.shade700,
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
               icon: const Icon(
                 Icons.arrow_back,
-                color: Colors.black87,
+                color: Colors.white,
                 // color: Colors.grey.shade200,
                 size: 35,
               ),
@@ -297,7 +284,7 @@ class _RegistroDatosAdministrativosState
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red.shade500,
+                      backgroundColor: Colors.red.shade700,
                     ),
                     onPressed: isEditing ? () => saveData() : null,
                     child: const Text(
@@ -308,7 +295,7 @@ class _RegistroDatosAdministrativosState
                   const SizedBox(width: 10),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red.shade500,
+                      backgroundColor: Colors.red.shade700,
                     ),
                     onPressed: () {
                       setState(() {
@@ -323,7 +310,7 @@ class _RegistroDatosAdministrativosState
                   const Gap(10),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red.shade500,
+                      backgroundColor: Colors.red.shade700,
                     ),
                     onPressed: areAllFieldsEmpty()
                         ? null
@@ -338,7 +325,7 @@ class _RegistroDatosAdministrativosState
               const Gap(10),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red.shade500,
+                  backgroundColor: Colors.red.shade700,
                 ),
                 onPressed: areAllFieldsNotEmpty() ? continuar : null,
                 child: const Text(
@@ -354,17 +341,41 @@ class _RegistroDatosAdministrativosState
   }
 
   Widget buildTextField(String labelText, TextEditingController controller) {
-    return TextField(
-      controller: controller,
-      enabled: isEditing,
-      onChanged: (value) {
-        setState(() {
-          hasChanges = true;
-        });
-      },
-      decoration: InputDecoration(
-        labelText: labelText,
-        hintText: 'Ingrese $labelText',
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+        controller: controller,
+        enabled: isEditing,
+        onChanged: (value) {
+          setState(() {
+            hasChanges = true;
+          });
+        },
+        cursorColor: Colors.red.shade900,
+        cursorOpacityAnimates: true,
+        autofocus: true,
+        decoration: InputDecoration(
+            labelText: labelText,
+            floatingLabelStyle: TextStyle(
+                color: Colors.red.shade900, fontWeight: FontWeight.w700),
+            hintText: 'Ingrese $labelText',
+            hoverColor: Colors.red.shade900,
+            border: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.red, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.grey, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.grey, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.red.shade700, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            )),
       ),
     );
   }

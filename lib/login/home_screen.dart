@@ -24,11 +24,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadButtonStates();
-    super.initState();
+    _loadResetButtonState();
     SharedPreferencesHelper.loadSavedData(nombrePropietario, modeloDelCarroMoto,
         placasDelCarroMoto, colorDelCarroMoto, telefonoController);
     // Cargar el estado del botón "Restablecer" al inicio de la pantalla
-    _loadResetButtonState();
   }
 
   // final User? user = FirebaseAuth.instance.currentUser;

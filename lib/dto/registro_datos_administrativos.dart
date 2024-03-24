@@ -107,26 +107,8 @@ class _RegistroDatosAdministrativosState
 
   // Método para guardar los datos en SharedPreferences
   void saveData() async {
-    // Validar que los campos numéricos solo contengan números
-    // if (!isNumeric(numInteriorController.text)) {
-    //   Fluttertoast.showToast(
-    //     msg: 'El Número Interior solo deben contener números',
-    //     backgroundColor: Colors.red,
-    //     textColor: Colors.white,
-    //   );
-
-    //   return;
-    // }
-
-    // // Validar el código postal
-    // if (!isPostalCodeValid(codigoPostalController.text)) {
-    //   Fluttertoast.showToast(
-    //     msg: 'El Código postal debe ser de 5 dígitos',
-    //     backgroundColor: Colors.red,
-    //     textColor: Colors.white,
-    //   );
-    //   return;
-    // }
+    SharedPreferencesHelper.saveData(nombrePropietario, modeloDelCarroMoto,
+        placasDelCarroMoto, colorDelCarroMoto, telefonoController);
 
     // Validar que los campos numéricos solo contengan números
     if (!isTelefonoCodeValid(telefonoController.text)) {
@@ -145,9 +127,6 @@ class _RegistroDatosAdministrativosState
       );
       return;
     }
-
-    SharedPreferencesHelper.saveData(nombrePropietario, modeloDelCarroMoto,
-        placasDelCarroMoto, colorDelCarroMoto, telefonoController);
 
     // Muestra el Toast al guardar si hay cambios
     if (hasChanges) {
@@ -194,7 +173,8 @@ class _RegistroDatosAdministrativosState
       );
       return;
     } else {
-      saveData();
+      SharedPreferencesHelper.saveData(nombrePropietario, modeloDelCarroMoto,
+          placasDelCarroMoto, colorDelCarroMoto, telefonoController);
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => const HomeScreen()));
     }

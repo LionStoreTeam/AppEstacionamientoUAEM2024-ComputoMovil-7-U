@@ -236,7 +236,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadius.circular(30)),
                           alignment: Alignment.center,
                           child: TextUtil(
-                            text: "Log In",
+                            text: "Ingresar",
                             color: Colors.black,
                           ),
                         ),

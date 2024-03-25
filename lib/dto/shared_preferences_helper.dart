@@ -2,6 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesHelper {
+  // Método estático para guardar el tipo de usuario seleccionado
+  static Future<void> saveTipoUsuario(String tipoUsuario) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('tipoUsuario', tipoUsuario);
+  }
+
+  // Método estático para cargar el tipo de usuario seleccionado
+  static Future<String?> loadTipoUsuario() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('tipoUsuario');
+  }
+
   static Future<void> loadSavedData(
       TextEditingController nombrePropietario,
       TextEditingController modeloDelCarroMoto,
@@ -39,6 +51,8 @@ class SharedPreferencesHelper {
     prefs.remove('telefono');
   }
 }
+
+
 
 
 // import 'package:flutter/material.dart';

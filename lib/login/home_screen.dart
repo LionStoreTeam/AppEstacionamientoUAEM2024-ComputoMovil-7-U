@@ -1,11 +1,10 @@
-import 'package:estacionamiento_uaem/dto/registro_datos_administrativos.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:estacionamiento_uaem/dto/shared_preferences_helper.dart';
-import 'package:estacionamiento_uaem/screens/administrativos_screen.dart';
-import 'package:estacionamiento_uaem/screens/alumnos_screen.dart';
+import 'package:estacionamiento_uaem/screens/disponibilidad_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -15,19 +14,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool _adminEnabled = true;
-  bool _teacherEnabled = true;
-  bool _studentEnabled = true;
-  bool _resetEnabled = true;
-
   @override
   void initState() {
     super.initState();
-    _loadButtonStates();
-    _loadResetButtonState();
     SharedPreferencesHelper.loadSavedData(nombrePropietario, modeloDelCarroMoto,
         placasDelCarroMoto, colorDelCarroMoto, telefonoController);
-    // Cargar el estado del botón "Restablecer" al inicio de la pantalla
+    // Cargar el tipo de usuario seleccionado al iniciar la pantalla
+    SharedPreferencesHelper.loadTipoUsuario().then((value) {
+      if (value != null) {
+        setState(() {
+          tipoUsuarioSeleccionado = value;
+        });
+      }
+    });
   }
 
   // final User? user = FirebaseAuth.instance.currentUser;
@@ -42,35 +41,150 @@ class _HomeScreenState extends State<HomeScreen> {
       TextEditingController(); // nombre registrado con la cuenta
   // TextEditingController correoController = TextEditingController();
 
-  void _loadButtonStates() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _adminEnabled = prefs.getBool('adminEnabled') ?? true;
-      _teacherEnabled = prefs.getBool('teacherEnabled') ?? true;
-      _studentEnabled = prefs.getBool('studentEnabled') ?? true;
-    });
+  // Opciones para el DropdownButton
+  final List<String> opcionesTipoUsuario = [
+    "Administrativos",
+    "Maestros",
+    "Alumnos"
+  ];
+
+  // Opción seleccionada por defecto
+  String tipoUsuarioSeleccionado = "Administrativos";
+
+  bool isEditing = false;
+  bool hasChanges = false; // Nueva variable para rastrear cambios
+  // Declarar la variable para verificar si los datos han sido guardados
+  bool datosGuardados = false;
+
+  // Método para validar si los campos son números
+  bool isNumeric(String value) {
+    if (value.isEmpty) {
+      return false;
+    }
+    return double.tryParse(value) != null;
   }
 
-  // Método para cargar el estado del botón "Restablecer" desde SharedPreferences
-  void _loadResetButtonState() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _resetEnabled = prefs.getBool('resetEnabled') ?? true;
-    });
+// // Método para validar el código postal
+//   bool isPostalCodeValid(String value) {
+//     return value.length == 5 && isNumeric(value);
+//   }
+
+  // Método para validar el número de Teléfono
+  bool isTelefonoCodeValid(String value) {
+    return value.length == 10 && isNumeric(value);
+  }
+
+// Método para validar si los campos están vacíos
+  bool areFieldsEmpty() {
+    return nombrePropietario.text.isEmpty ||
+        modeloDelCarroMoto.text.isEmpty ||
+        // numInteriorController.text.isEmpty ||
+        // !isPostalCodeValid(codigoPostalController.text) ||
+        placasDelCarroMoto.text.isEmpty ||
+        colorDelCarroMoto.text.isEmpty ||
+        !isTelefonoCodeValid(telefonoController.text);
+  }
+
+  // Método para guardar los datos en SharedPreferences
+  void saveData() async {
+    SharedPreferencesHelper.saveData(nombrePropietario, modeloDelCarroMoto,
+        placasDelCarroMoto, colorDelCarroMoto, telefonoController);
+
+    if (areFieldsEmpty()) {
+      Fluttertoast.showToast(
+        msg: 'Todos los campos son obligatorios',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+      return;
+    }
+
+    // Validar que los campos numéricos solo contengan números
+    if (!isTelefonoCodeValid(telefonoController.text)) {
+      Fluttertoast.showToast(
+        msg: 'El Número de Teléfono debe ser de 10 dígitos',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+      return;
+    }
+
+    // Muestra el Toast al guardar si hay cambios
+    if (hasChanges) {
+      Fluttertoast.showToast(
+        msg: 'Modificaciones guardadas',
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+      );
+      hasChanges = false; // Reinicia la variable después de mostrar el Toast
+      setState(() {
+        isEditing = false; // Deshabilita la edición después de guardar
+      });
+    } else {
+      Fluttertoast.showToast(
+        msg: 'Sin modificaciones',
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+      );
+      setState(() {
+        isEditing = false; // Deshabilita la edición después de guardar
+      });
+    }
+    // Establecer hasChanges en false después de guardar los datos
+    hasChanges = false;
+    // Actualizar datosGuardados a true después de guardar los datos
+    datosGuardados = true;
+    setState(() {}); // Actualizar el estado para reflejar el cambio
+  }
+
+  // // Método para limpiar los datos de los TextField y SharedPreferences
+  // void clearData() {
+  //   SharedPreferencesHelper.clearData();
+  //   setState(() {
+  //     nombrePropietario.text = '';
+  //     modeloDelCarroMoto.text = '';
+  //     placasDelCarroMoto.text = '';
+  //     colorDelCarroMoto.text = '';
+  //     telefonoController.text = '';
+  //   });
+  // }
+
+  void continuar() {
+    SharedPreferencesHelper.saveData(nombrePropietario, modeloDelCarroMoto,
+        placasDelCarroMoto, colorDelCarroMoto, telefonoController);
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const DisponibilidadScreen()));
   }
 
   @override
   Widget build(BuildContext context) {
+    //---- CONSTRUCTOR PARA OBTENER LOS DATOS DEL USUARIO ---- //
+    // final User? user = FirebaseAuth.instance.currentUser;
+
+//---- MÉTODO PARA OBTENER LOS DOS PRIMEROS NOMBRES DEL USUARIO ---- //
+
+    // ignore: unused_element
+    String getFirstTwoNames(String fullName) {
+      if (fullName.isEmpty) {
+        return '';
+      }
+
+      List<String> nameFragments = fullName.split(' ');
+
+      if (nameFragments.length >= 2) {
+        return '${nameFragments[0]} ${nameFragments[1]}';
+      } else {
+        // Si el nombre completo tiene menos de dos fragmentos, regresa el nombre completo.
+        return fullName;
+      }
+    }
+
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: AppBar(
         title: const Text(
-          "Bienvenido",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.7,
-          ),
+          "Datos Administrativos",
+          style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
         elevation: 0,
@@ -78,8 +192,12 @@ class _HomeScreenState extends State<HomeScreen> {
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: const Icon(Icons.arrow_back_sharp),
-              color: Colors.white,
+              icon: const Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+                // color: Colors.grey.shade200,
+                size: 35,
+              ),
               onPressed: () => _onBackButtonPressed(context),
             );
           },
@@ -94,137 +212,130 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 200,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage("assets/park_sinfondo.png"),
+                    image: AssetImage("assets/park_sinfondo2.png"),
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
-              const Gap(40),
-              Container(
-                decoration: const BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: Colors.black87,
-                      width: 3,
+              // DropdownButton para seleccionar el tipo de usuario
+              Text(
+                "Selecciona el tipo de usuario de acuerdo a tu perfil.",
+                style: TextStyle(
+                  color: Colors.red.shade900,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const Gap(15),
+              DropdownButton<String>(
+                value: tipoUsuarioSeleccionado,
+                padding: const EdgeInsets.all(8.0),
+                focusColor: Colors.red.shade50,
+                icon: const Icon(
+                  Icons.arrow_downward,
+                ),
+                iconEnabledColor: Colors.red.shade700,
+                iconDisabledColor: Colors.grey,
+                elevation: 16,
+                underline: Container(
+                  height: 2,
+                  color: Colors.red.shade700,
+                ),
+                items: opcionesTipoUsuario.map((String opcion) {
+                  return DropdownMenuItem<String>(
+                    value: opcion,
+                    child: Text(opcion),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      tipoUsuarioSeleccionado = newValue;
+                    });
+                    // Guardar el tipo de usuario seleccionado
+                    SharedPreferencesHelper.saveTipoUsuario(newValue);
+                  }
+                },
+              ),
+              const Gap(15),
+              // TextFields para el nombre y el correo (deshabilitados)
+              // buildDisabledTextField(
+              //     "Nombre", nombreController, user?.displayName ?? ''),
+              // buildDisabledTextField(
+              //     "Correo", correoController, user?.email ?? ''),
+
+              // TextFields para la información de dirección y teléfono
+              buildTextFieldNombreColor(
+                  "Nombre del Propietario", nombrePropietario),
+              buildTextFieldModelo(
+                  "Modelo del Vehículo/Motocicleta", modeloDelCarroMoto),
+              // buildTextField("Número de Matricula", numInteriorController),
+              // buildTextField(
+              //     "Código Postal - 5 Dígitos", codigoPostalController),
+              buildTextFieldPlacas(
+                  "Placas del Vehículo/Motocicleta", placasDelCarroMoto),
+              buildTextFieldNombreColor(
+                  "Color del Vehículo/Motocicleta", colorDelCarroMoto),
+              buildTextFieldTelefono("Teléfono", telefonoController),
+
+              const SizedBox(height: 20),
+
+              // Botones Guardar, Editar y Limpiar Datos
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red.shade700,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        isEditing = true;
+                      });
+                    },
+                    child: const Text(
+                      'Comprobar Datos',
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
-                ),
-                child: const Text(
-                  "Ingresar",
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red.shade700,
+                    ),
+                    onPressed: isEditing ? () => saveData() : null,
+                    child: const Text(
+                      'Guardar',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
-                ),
+
+                  // ElevatedButton(
+                  //   style: ElevatedButton.styleFrom(
+                  //     backgroundColor: Colors.red.shade700,
+                  //   ),
+                  //   onPressed: areAllFieldsEmpty()
+                  //       ? null
+                  //       : clearData, // Deshabilitar si todos los campos están vacíos
+                  //   child: const Text(
+                  //     'Restablecer',
+                  //     style: TextStyle(color: Colors.white),
+                  //   ),
+                  // ),
+                ],
               ),
-              const Gap(60),
+              const Gap(20),
               ElevatedButton.icon(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
-                      _adminEnabled ? Colors.red.shade400 : Colors.grey),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red.shade700,
                 ),
-                onPressed: _adminEnabled
-                    ? () {
-                        _disableButtons('admin');
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const AdministrativosScreen(),
-                          ),
-                        );
-                      }
-                    : null,
-                label: Text(
-                  "Soy Administrativo",
-                  style: TextStyle(
-                    color: Colors.red.shade50,
-                    fontSize: 22,
-                  ),
+                onPressed: datosGuardados ? continuar : null,
+                label: const Text(
+                  'Continuar',
+                  style: TextStyle(color: Colors.white),
                 ),
-                icon: Icon(
-                  Icons.text_snippet_outlined,
-                  color: Colors.red.shade50,
-                ),
-              ),
-              const Gap(30),
-              ElevatedButton.icon(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
-                      _teacherEnabled ? Colors.red.shade400 : Colors.grey),
-                ),
-                onPressed: _teacherEnabled
-                    ? () {
-                        _disableButtons('teacher');
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const RegistroDatosAdministrativos(),
-                          ),
-                        );
-                      }
-                    : null,
-                label: Text(
-                  "Soy Maestro",
-                  style: TextStyle(
-                    color: Colors.red.shade50,
-                    fontSize: 22,
-                  ),
-                ),
-                icon: Icon(
-                  Icons.border_color_outlined,
-                  color: Colors.red.shade50,
-                ),
-              ),
-              const Gap(30),
-              ElevatedButton.icon(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
-                      _studentEnabled ? Colors.red.shade400 : Colors.grey),
-                ),
-                onPressed: _studentEnabled
-                    ? () {
-                        _disableButtons('student');
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const AlumnosScreen(),
-                          ),
-                        );
-                      }
-                    : null,
-                label: Text(
-                  "Soy Alumno",
-                  style: TextStyle(
-                    color: Colors.red.shade50,
-                    fontSize: 22,
-                  ),
-                ),
-                icon: Icon(
-                  Icons.school_outlined,
-                  color: Colors.red.shade50,
-                ),
-              ),
-              const Gap(30),
-              ElevatedButton.icon(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.black87),
-                ),
-                onPressed: () {
-                  clearData();
-                  _resetButtons();
-                },
-                label: Text(
-                  "Restablecer",
-                  style: TextStyle(
-                    color: Colors.red.shade50,
-                    fontSize: 22,
-                  ),
-                ),
-                icon: Icon(
-                  Icons.replay_sharp,
-                  color: Colors.red.shade50,
+                icon: const Icon(
+                  Icons.arrow_forward,
+                  color: Colors.white,
                 ),
               ),
             ],
@@ -234,45 +345,197 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _disableButtons(String activeButton) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      if (activeButton != 'admin') {
-        _adminEnabled = false;
-        prefs.setBool('adminEnabled', _adminEnabled);
-      }
-      if (activeButton != 'teacher') {
-        _teacherEnabled = false;
-        prefs.setBool('teacherEnabled', _teacherEnabled);
-      }
-      if (activeButton != 'student') {
-        _studentEnabled = false;
-        prefs.setBool('studentEnabled', _studentEnabled);
-      }
-    });
+  Widget buildTextFieldNombreColor(
+      String labelText, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.allow(
+              RegExp(r'[a-zA-Z]')), // Solo letras// Solo números
+        ],
+        controller: controller,
+        enabled: isEditing,
+        onChanged: (value) {
+          setState(() {
+            hasChanges = true;
+          });
+        },
+        cursorColor: Colors.red.shade900,
+        cursorOpacityAnimates: true,
+        autofocus: true,
+        decoration: InputDecoration(
+            labelText: labelText,
+            floatingLabelStyle: TextStyle(
+                color: Colors.red.shade900, fontWeight: FontWeight.w700),
+            hintText: 'Ingrese el $labelText',
+            hoverColor: Colors.red.shade900,
+            border: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.red, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.grey, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.grey, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.red.shade700, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            )),
+      ),
+    );
   }
 
-  void clearData() {
-    SharedPreferencesHelper.clearData();
-    setState(() {
-      nombrePropietario.text = '';
-      modeloDelCarroMoto.text = '';
-      placasDelCarroMoto.text = '';
-      colorDelCarroMoto.text = '';
-      telefonoController.text = '';
-    });
+  Widget buildTextFieldModelo(
+      String labelText, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+        controller: controller,
+        enabled: isEditing,
+        onChanged: (value) {
+          setState(() {
+            hasChanges = true;
+          });
+        },
+        cursorColor: Colors.red.shade900,
+        cursorOpacityAnimates: true,
+        autofocus: true,
+        decoration: InputDecoration(
+            labelText: labelText,
+            floatingLabelStyle: TextStyle(
+                color: Colors.red.shade900, fontWeight: FontWeight.w700),
+            hintText: 'Ingrese el modelo del Vehículo/Motocicleta',
+            hoverColor: Colors.red.shade900,
+            border: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.red, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.grey, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.grey, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.red.shade700, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            )),
+      ),
+    );
   }
 
-  void _resetButtons() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _adminEnabled = true;
-      _teacherEnabled = true;
-      _studentEnabled = true;
-      _resetEnabled = true;
-    });
-    // Guardar el estado del botón "Restablecer" en SharedPreferences
-    prefs.setBool('resetEnabled', _resetEnabled);
+  Widget buildTextFieldPlacas(
+      String labelText, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+        maxLengthEnforcement: MaxLengthEnforcement.enforced,
+        maxLength: 7,
+        inputFormatters: <TextInputFormatter>[
+          // Límite de 10 caracteres
+          FilteringTextInputFormatter.allow(
+              RegExp(r'[0-9-a-zA-Z]')), // Solo números
+        ],
+        controller: controller,
+        enabled: isEditing,
+        onChanged: (value) {
+          setState(() {
+            hasChanges = true;
+          });
+        },
+        cursorColor: Colors.red.shade900,
+        cursorOpacityAnimates: true,
+        autofocus: true,
+        decoration: InputDecoration(
+            labelText: labelText,
+            counterText: "",
+            floatingLabelStyle: TextStyle(
+                color: Colors.red.shade900, fontWeight: FontWeight.w700),
+            hintText: 'Ingrese las placas a 7 caracteres',
+            hoverColor: Colors.red.shade900,
+            border: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.red, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.grey, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.grey, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.red.shade700, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            )),
+      ),
+    );
+  }
+
+  Widget buildTextFieldTelefono(
+      String labelText, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+        keyboardType: TextInputType.number,
+        inputFormatters: <TextInputFormatter>[
+          LengthLimitingTextInputFormatter(10), // Límite de 10 caracteres
+          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), // Solo números
+        ],
+        controller: controller,
+        enabled: isEditing,
+        onChanged: (value) {
+          setState(() {
+            hasChanges = true;
+          });
+        },
+        cursorColor: Colors.red.shade900,
+        cursorOpacityAnimates: true,
+        autofocus: true,
+        decoration: InputDecoration(
+            labelText: labelText,
+            floatingLabelStyle: TextStyle(
+                color: Colors.red.shade900, fontWeight: FontWeight.w700),
+            hintText: 'Ingrese un número celular a 10 dígitos',
+            hoverColor: Colors.red.shade900,
+            border: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.red, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.grey, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.grey, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.red.shade700, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            )),
+      ),
+    );
+  }
+
+  Widget buildDisabledTextField(
+      String labelText, TextEditingController controller, String value) {
+    return TextField(
+      controller: controller,
+      enabled: false,
+      decoration: InputDecoration(
+        labelText: labelText,
+        hintText: value,
+      ),
+    );
   }
 
   Future<bool> _onBackButtonPressed(BuildContext context) async {

@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:estacionamiento_uaem/dto/bg_data.dart';
-import 'package:estacionamiento_uaem/login/home_screen.dart';
+import 'package:estacionamiento_uaem/screens/home_screen.dart';
 import 'package:estacionamiento_uaem/login/register_screen.dart';
 import 'package:estacionamiento_uaem/utils/animations.dart';
 import 'package:estacionamiento_uaem/utils/text_utils.dart';

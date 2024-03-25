@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:estacionamiento_uaem/login/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -30,19 +29,22 @@ class MapEstacionamientoState extends State<MapEstacionamiento> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Maps"),
+        title: const Text(
+          "Maps",
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.indigo.shade600,
+        backgroundColor: Colors.red.shade700,
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: const Icon(Icons.arrow_back_sharp),
+              icon: const Icon(
+                Icons.arrow_back_sharp,
+                color: Colors.white,
+              ),
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const HomeScreen()));
+                Navigator.pop(context);
               },
             );
           },

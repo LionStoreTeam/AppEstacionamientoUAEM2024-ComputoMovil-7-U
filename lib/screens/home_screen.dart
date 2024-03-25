@@ -43,13 +43,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Opciones para el DropdownButton
   final List<String> opcionesTipoUsuario = [
-    "Administrativos",
-    "Maestros",
-    "Alumnos"
+    "Administrativo",
+    "Maestro",
+    "Alumno"
   ];
 
   // Opción seleccionada por defecto
-  String tipoUsuarioSeleccionado = "Administrativos";
+  String tipoUsuarioSeleccionado = "Administrativo";
 
   bool isEditing = false;
   bool hasChanges = false; // Nueva variable para rastrear cambios
@@ -183,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
       extendBodyBehindAppBar: false,
       appBar: AppBar(
         title: const Text(
-          "Datos Administrativos",
+          "Registro",
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
@@ -209,52 +209,56 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             children: [
               Container(
-                height: 200,
+                height: 100,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage("assets/park_sinfondo2.png"),
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),
-              // DropdownButton para seleccionar el tipo de usuario
+              const Gap(30),
               Text(
-                "Selecciona el tipo de usuario de acuerdo a tu perfil.",
+                "Seleccione el tipo de usuario de acuerdo a su perfil.",
                 style: TextStyle(
                   color: Colors.red.shade900,
                   fontWeight: FontWeight.w700,
                 ),
               ),
               const Gap(15),
-              DropdownButton<String>(
-                value: tipoUsuarioSeleccionado,
-                padding: const EdgeInsets.all(8.0),
-                focusColor: Colors.red.shade50,
-                icon: const Icon(
-                  Icons.arrow_downward,
+              Container(
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.red.shade700, width: 3.5)),
+                child: DropdownButton<String>(
+                  value: tipoUsuarioSeleccionado,
+                  padding: const EdgeInsets.all(8.0),
+                  focusColor: Colors.red.shade50,
+                  icon: const Icon(
+                    Icons.arrow_downward,
+                  ),
+                  iconEnabledColor: Colors.red.shade700,
+                  iconDisabledColor: Colors.grey,
+                  elevation: 16,
+                  underline: Container(
+                    height: 2,
+                    color: Colors.red.shade700,
+                  ),
+                  items: opcionesTipoUsuario.map((String opcion) {
+                    return DropdownMenuItem<String>(
+                      value: opcion,
+                      child: Text(opcion),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      setState(() {
+                        tipoUsuarioSeleccionado = newValue;
+                      });
+                      // Guardar el tipo de usuario seleccionado
+                      SharedPreferencesHelper.saveTipoUsuario(newValue);
+                    }
+                  },
                 ),
-                iconEnabledColor: Colors.red.shade700,
-                iconDisabledColor: Colors.grey,
-                elevation: 16,
-                underline: Container(
-                  height: 2,
-                  color: Colors.red.shade700,
-                ),
-                items: opcionesTipoUsuario.map((String opcion) {
-                  return DropdownMenuItem<String>(
-                    value: opcion,
-                    child: Text(opcion),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      tipoUsuarioSeleccionado = newValue;
-                    });
-                    // Guardar el tipo de usuario seleccionado
-                    SharedPreferencesHelper.saveTipoUsuario(newValue);
-                  }
-                },
               ),
               const Gap(15),
               // TextFields para el nombre y el correo (deshabilitados)

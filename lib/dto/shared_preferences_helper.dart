@@ -16,12 +16,14 @@ class SharedPreferencesHelper {
 
   static Future<void> loadSavedData(
       TextEditingController nombrePropietario,
+      TextEditingController matriculaDeControl,
       TextEditingController modeloDelCarroMoto,
       TextEditingController placasDelCarroMoto,
       TextEditingController colorDelCarroMoto,
       TextEditingController telefonoController) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     nombrePropietario.text = prefs.getString('nombrePropietario') ?? '';
+    matriculaDeControl.text = prefs.getString('matriculaDeControl') ?? '';
     modeloDelCarroMoto.text = prefs.getString('modeloCarroMoto') ?? '';
     placasDelCarroMoto.text = prefs.getString('placasCarroMoto') ?? '';
     colorDelCarroMoto.text = prefs.getString('colorCarroMoto') ?? '';
@@ -30,12 +32,14 @@ class SharedPreferencesHelper {
 
   static Future<void> saveData(
       TextEditingController nombrePropietario,
+      TextEditingController matriculaDeControl,
       TextEditingController modeloDelCarroMoto,
       TextEditingController placasDelCarroMoto,
       TextEditingController colorDelCarroMoto,
       TextEditingController telefonoController) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('nombrePropietario', nombrePropietario.text);
+    prefs.setString('matriculaDeControl', matriculaDeControl.text);
     prefs.setString('modeloCarroMoto', modeloDelCarroMoto.text);
     prefs.setString('placasCarroMoto', placasDelCarroMoto.text);
     prefs.setString('colorCarroMoto', colorDelCarroMoto.text);
@@ -45,6 +49,7 @@ class SharedPreferencesHelper {
   static Future<void> clearData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('nombrePropietario');
+    prefs.remove('matriculaDeControl');
     prefs.remove('modeloCarroMoto');
     prefs.remove('placasCarroMoto');
     prefs.remove('colorCarroMoto');

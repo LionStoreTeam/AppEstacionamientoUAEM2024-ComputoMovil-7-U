@@ -17,8 +17,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    SharedPreferencesHelper.loadSavedData(nombrePropietario, modeloDelCarroMoto,
-        placasDelCarroMoto, colorDelCarroMoto, telefonoController);
+    SharedPreferencesHelper.loadSavedData(
+      nombrePropietario,
+      modeloDelCarroMoto,
+      placasDelCarroMoto,
+      colorDelCarroMoto,
+      telefonoController,
+      matriculaDeControl,
+    );
     // Cargar el tipo de usuario seleccionado al iniciar la pantalla
     SharedPreferencesHelper.loadTipoUsuario().then((value) {
       if (value != null) {
@@ -31,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // final User? user = FirebaseAuth.instance.currentUser;
   TextEditingController nombrePropietario = TextEditingController();
+  TextEditingController matriculaDeControl = TextEditingController();
   TextEditingController modeloDelCarroMoto = TextEditingController();
   // TextEditingController numInteriorController = TextEditingController();
   // TextEditingController codigoPostalController = TextEditingController();
@@ -82,13 +89,19 @@ class _HomeScreenState extends State<HomeScreen> {
         // !isPostalCodeValid(codigoPostalController.text) ||
         placasDelCarroMoto.text.isEmpty ||
         colorDelCarroMoto.text.isEmpty ||
+        matriculaDeControl.text.isEmpty ||
         !isTelefonoCodeValid(telefonoController.text);
   }
 
   // Método para guardar los datos en SharedPreferences
   void saveData() async {
-    SharedPreferencesHelper.saveData(nombrePropietario, modeloDelCarroMoto,
-        placasDelCarroMoto, colorDelCarroMoto, telefonoController);
+    SharedPreferencesHelper.saveData(
+        nombrePropietario,
+        modeloDelCarroMoto,
+        placasDelCarroMoto,
+        colorDelCarroMoto,
+        telefonoController,
+        matriculaDeControl);
 
     if (areFieldsEmpty()) {
       Fluttertoast.showToast(
@@ -150,8 +163,13 @@ class _HomeScreenState extends State<HomeScreen> {
   // }
 
   void continuar() {
-    SharedPreferencesHelper.saveData(nombrePropietario, modeloDelCarroMoto,
-        placasDelCarroMoto, colorDelCarroMoto, telefonoController);
+    SharedPreferencesHelper.saveData(
+        nombrePropietario,
+        modeloDelCarroMoto,
+        placasDelCarroMoto,
+        colorDelCarroMoto,
+        telefonoController,
+        matriculaDeControl);
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => const DisponibilidadScreen()));
   }
@@ -270,6 +288,8 @@ class _HomeScreenState extends State<HomeScreen> {
               // TextFields para la información de dirección y teléfono
               buildTextFieldNombreColor(
                   "Nombre del Propietario", nombrePropietario),
+              buildTextFieldMatriculaControl(
+                  "Matricula De Control", matriculaDeControl),
               buildTextFieldModelo(
                   "Modelo del Vehículo/Motocicleta", modeloDelCarroMoto),
               // buildTextField("Número de Matricula", numInteriorController),
@@ -354,6 +374,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextField(
+        maxLengthEnforcement: MaxLengthEnforcement.enforced,
+        maxLength: 10,
         inputFormatters: <TextInputFormatter>[
           FilteringTextInputFormatter.allow(
               RegExp(r'[a-zA-Z]')), // Solo letras// Solo números
@@ -370,9 +392,56 @@ class _HomeScreenState extends State<HomeScreen> {
         autofocus: true,
         decoration: InputDecoration(
             labelText: labelText,
+            counterText: "",
             floatingLabelStyle: TextStyle(
                 color: Colors.red.shade900, fontWeight: FontWeight.w700),
             hintText: 'Ingrese el $labelText',
+            hoverColor: Colors.red.shade900,
+            border: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.red, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.grey, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.grey, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.red.shade700, width: 4),
+              borderRadius: BorderRadius.circular(12),
+            )),
+      ),
+    );
+  }
+
+  Widget buildTextFieldMatriculaControl(
+      String labelText, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+        keyboardType: TextInputType.number,
+        inputFormatters: <TextInputFormatter>[
+          LengthLimitingTextInputFormatter(8), // Límite de 10 caracteres
+          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), // Solo números
+        ],
+        controller: controller,
+        enabled: isEditing,
+        onChanged: (value) {
+          setState(() {
+            hasChanges = true;
+          });
+        },
+        cursorColor: Colors.red.shade900,
+        cursorOpacityAnimates: true,
+        autofocus: true,
+        decoration: InputDecoration(
+            labelText: labelText,
+            floatingLabelStyle: TextStyle(
+                color: Colors.red.shade900, fontWeight: FontWeight.w700),
+            hintText: 'Ingrese su Matricula a 8 dígitos',
             hoverColor: Colors.red.shade900,
             border: OutlineInputBorder(
               borderSide: const BorderSide(color: Colors.red, width: 4),
@@ -401,6 +470,8 @@ class _HomeScreenState extends State<HomeScreen> {
       child: TextField(
         controller: controller,
         enabled: isEditing,
+        maxLengthEnforcement: MaxLengthEnforcement.enforced,
+        maxLength: 10,
         onChanged: (value) {
           setState(() {
             hasChanges = true;
@@ -411,6 +482,7 @@ class _HomeScreenState extends State<HomeScreen> {
         autofocus: true,
         decoration: InputDecoration(
             labelText: labelText,
+            counterText: "",
             floatingLabelStyle: TextStyle(
                 color: Colors.red.shade900, fontWeight: FontWeight.w700),
             hintText: 'Ingrese el modelo del Vehículo/Motocicleta',

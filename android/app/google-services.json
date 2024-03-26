@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "705067197181",
+    "project_id": "estacionamiento-uaem",
+    "storage_bucket": "estacionamiento-uaem.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:705067197181:android:5ac09dd192c94334709494",
+        "android_client_info": {
+          "package_name": "com.example.estacionamiento_uaem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "705067197181-08q6qafoeui45dmjutsjd29agsdj5h89.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.estacionamiento_uaem",
+            "certificate_hash": "739b8025c2b1a6a57f56f41f73ab8c3a015e10ee"
+          }
+        },
+        {
+          "client_id": "705067197181-v0mhm23q21ubpnaa7uat9k60jfn39qna.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFTi38YAKFPeiVTEYsTNyqIxDGa5gsW8s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "705067197181-v0mhm23q21ubpnaa7uat9k60jfn39qna.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "705067197181-2l51tpop444kdffjapng991k31c9fipl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.estacionamientoUaem.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

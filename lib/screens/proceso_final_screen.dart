@@ -373,8 +373,9 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
                         ),
                       ),
                       const Padding(
-                        padding: EdgeInsets.only(left: 15, top: 10),
+                        padding: EdgeInsets.only(top: 10),
                         child: Text(
+                          textAlign: TextAlign.center,
                           'Para pagos en efectivo los precios con terminación menor a 50¢ serán redondeados a 0¢, para precios con terminación mayor a 50¢ serán redondeados a la cantidad mayor.',
                           style: TextStyle(
                             color: Colors.black,

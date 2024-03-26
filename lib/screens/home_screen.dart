@@ -1,6 +1,8 @@
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:estacionamiento_uaem/dto/shared_preferences_helper.dart';
+import 'package:estacionamiento_uaem/login/sign_in_screen.dart';
 import 'package:estacionamiento_uaem/screens/disponibilidad_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -230,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 100,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage("assets/park_sinfondo2.png"),
+                    image: AssetImage("assets/park3.png"),
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -240,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 textAlign: TextAlign.center,
                 "Seleccione el tipo de usuario de acuerdo a su perfil.",
                 style: TextStyle(
-                  color: Colors.grey.shade800,
+                  color: Colors.grey.shade400,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -310,7 +312,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red.shade700,
+                      backgroundColor: Colors.red.shade900,
                     ),
                     onPressed: () {
                       setState(() {
@@ -325,7 +327,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(width: 10),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red.shade700,
+                      backgroundColor: Colors.red.shade900,
                     ),
                     onPressed: isEditing ? () => saveData() : null,
                     child: const Text(
@@ -366,37 +368,63 @@ class _HomeScreenState extends State<HomeScreen> {
               GestureDetector(
                 onTap: datosGuardados ? continuar : null,
                 child: Container(
-                  width: 150,
+                  width: 180,
                   decoration: BoxDecoration(
-                    color:
-                        datosGuardados == false ? Colors.grey : Colors.black87,
+                    color: datosGuardados == false ? Colors.grey : Colors.white,
                     borderRadius: const BorderRadius.all(
                       Radius.circular(30),
                     ),
                   ),
                   child: Padding(
                     padding:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                        const EdgeInsets.symmetric(vertical: 7, horizontal: 7),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         const Text(
                           "Continuar",
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                         Row(
                           children: [
-                            Icon(Icons.car_rental_rounded,
-                                color: Colors.red.shade50),
-                            Icon(Icons.arrow_forward_rounded,
-                                color: Colors.red.shade50),
+                            Icon(
+                              Icons.car_rental_rounded,
+                              color: Colors.red.shade200,
+                              size: 30,
+                            ),
+                            Icon(
+                              Icons.arrow_forward_rounded,
+                              color: Colors.red.shade200,
+                              size: 30,
+                            ),
                           ],
                         )
                       ],
                     ),
                   ),
                 ),
-              )
+              ),
+              const Gap(20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red.shade900,
+                ),
+                onPressed: () {
+                  FirebaseAuth.instance.signOut();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignInScreen()));
+                },
+                child: const Text(
+                  'Cerrar Sesión',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
             ],
           ),
         ),

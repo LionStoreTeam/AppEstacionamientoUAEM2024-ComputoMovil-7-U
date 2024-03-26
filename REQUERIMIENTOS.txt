@@ -8,21 +8,21 @@ REQUERIMIENTO FUNCIONAL 1 (RQF01)
 
 REQUERIMIENTO FUNCIONAL 2 (RQF02)
     2.1 Agrego se olvidó contraseña Maestros, Alumnos, Foráneos, Administrativos. →
-    2.2 Altas, Bajas, Modificaciones. →
-        2.2.1 Alta coche (Registro de entrada, Registro de Maestros, Alumnos, Foráneos, Administrativos). →
+    2.2 Altas, Bajas, Modificaciones. → 
+        2.2.1 Alta coche (Registro de entrada, Registro de Maestros, Alumnos, Foráneos, Administrativos). → [Tarea Completada]
     2.3 Debe contener los siguientes puntos: 
-        2.3.1 Nombre del dueño del auto. →
-        2.3.2 Número de Placas. →
-        2.3.4 Color de auto. →
-        2.3.5 Hora de entrada y Hora de salida. →
-        2.3.6 Bajas (ELIMINAR algún dato erróneo). →
-        2.3.7 Modificar datos personales. →
+        2.3.1 Nombre del dueño del auto. → [Tarea Completada]
+        2.3.2 Número de Placas. → [Tarea Completada]
+        2.3.4 Color de auto. → [Tarea Completada]
+        2.3.5 Hora de entrada y Hora de salida. → [Tarea Completada]
+        2.3.6 Bajas (ELIMINAR algún dato erróneo). → [Tarea Completada]
+        2.3.7 Modificar datos personales. → [Tarea Completada]
 
 REQUERIMIENTO FUNCIONAL 3 (RQF03)
-    3.1 Genera Factura (funcional). →
-    3.2 Genera ticket (Genera el precio). →
-    3.3 Coloca el mapa (funciona el mapa). →
-    3.4 Coloca los espacios disponibles. →
+    3.1 Genera Factura (funcional). → 
+    3.2 Genera ticket (Genera el precio). → [Tarea Completada]
+    3.3 Coloca el mapa (funciona el mapa). → [Tarea Completada]
+    3.4 Coloca los espacios disponibles. → [Tarea Completada]
 
 
     https://www.youtube.com/watch?v=YVYIPIow418

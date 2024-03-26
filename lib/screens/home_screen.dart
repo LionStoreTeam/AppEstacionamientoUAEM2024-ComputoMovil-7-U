@@ -206,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.red.shade700,
+        backgroundColor: Colors.black87,
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -237,9 +237,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const Gap(30),
               Text(
+                textAlign: TextAlign.center,
                 "Seleccione el tipo de usuario de acuerdo a su perfil.",
                 style: TextStyle(
-                  color: Colors.red.shade900,
+                  color: Colors.grey.shade800,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -348,20 +349,54 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               const Gap(20),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red.shade700,
+              // ElevatedButton.icon(
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: Colors.red.shade700,
+              //   ),
+              //   onPressed: datosGuardados ? continuar : null,
+              //   label: const Text(
+              //     'Continuar',
+              //     style: TextStyle(color: Colors.white),
+              //   ),
+              //   icon: const Icon(
+              //     Icons.arrow_forward,
+              //     color: Colors.white,
+              //   ),
+              // ),
+              GestureDetector(
+                onTap: datosGuardados ? continuar : null,
+                child: Container(
+                  width: 150,
+                  decoration: BoxDecoration(
+                    color:
+                        datosGuardados == false ? Colors.grey : Colors.black87,
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(30),
+                    ),
+                  ),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        const Text(
+                          "Continuar",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        Row(
+                          children: [
+                            Icon(Icons.car_rental_rounded,
+                                color: Colors.red.shade50),
+                            Icon(Icons.arrow_forward_rounded,
+                                color: Colors.red.shade50),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
                 ),
-                onPressed: datosGuardados ? continuar : null,
-                label: const Text(
-                  'Continuar',
-                  style: TextStyle(color: Colors.white),
-                ),
-                icon: const Icon(
-                  Icons.arrow_forward,
-                  color: Colors.white,
-                ),
-              ),
+              )
             ],
           ),
         ),
@@ -392,7 +427,6 @@ class _HomeScreenState extends State<HomeScreen> {
         autofocus: true,
         decoration: InputDecoration(
             labelText: labelText,
-            counterText: "",
             floatingLabelStyle: TextStyle(
                 color: Colors.red.shade900, fontWeight: FontWeight.w700),
             hintText: 'Ingrese el $labelText',
@@ -422,6 +456,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextField(
+        maxLengthEnforcement: MaxLengthEnforcement.enforced,
+        maxLength: 8,
         keyboardType: TextInputType.number,
         inputFormatters: <TextInputFormatter>[
           LengthLimitingTextInputFormatter(8), // Límite de 10 caracteres
@@ -482,10 +518,9 @@ class _HomeScreenState extends State<HomeScreen> {
         autofocus: true,
         decoration: InputDecoration(
             labelText: labelText,
-            counterText: "",
             floatingLabelStyle: TextStyle(
                 color: Colors.red.shade900, fontWeight: FontWeight.w700),
-            hintText: 'Ingrese el modelo del Vehículo/Motocicleta',
+            hintText: 'Ingrese el modelo a 10 caracteres',
             hoverColor: Colors.red.shade900,
             border: OutlineInputBorder(
               borderSide: const BorderSide(color: Colors.red, width: 4),
@@ -531,7 +566,6 @@ class _HomeScreenState extends State<HomeScreen> {
         autofocus: true,
         decoration: InputDecoration(
             labelText: labelText,
-            counterText: "",
             floatingLabelStyle: TextStyle(
                 color: Colors.red.shade900, fontWeight: FontWeight.w700),
             hintText: 'Ingrese las placas a 7 caracteres',
@@ -561,6 +595,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextField(
+        maxLengthEnforcement: MaxLengthEnforcement.enforced,
+        maxLength: 10,
         keyboardType: TextInputType.number,
         inputFormatters: <TextInputFormatter>[
           LengthLimitingTextInputFormatter(10), // Límite de 10 caracteres

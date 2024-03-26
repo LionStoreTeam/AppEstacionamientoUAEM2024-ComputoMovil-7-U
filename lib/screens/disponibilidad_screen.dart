@@ -15,6 +15,10 @@ class _DisponibilidadScreenState extends State<DisponibilidadScreen> {
     "Cajón 2": false,
     "Cajón 3": false,
     "Cajón 4": true,
+    "Cajón 5": true,
+    "Cajón 6": false,
+    "Cajón 7": false,
+    "Cajón 8": true,
   };
 
   @override
@@ -27,7 +31,7 @@ class _DisponibilidadScreenState extends State<DisponibilidadScreen> {
         ),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.red.shade700,
+        backgroundColor: Colors.black,
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -39,7 +43,7 @@ class _DisponibilidadScreenState extends State<DisponibilidadScreen> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -47,22 +51,42 @@ class _DisponibilidadScreenState extends State<DisponibilidadScreen> {
                 children: [
                   Column(
                     children: [
-                      Text(
-                        "Los cajones marcados en color verde se ",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.purple.shade900,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 18,
-                          letterSpacing: 0.7,
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(
+                                    color: Colors.greenAccent.shade100))),
+                        child: Text(
+                          "Los cajones de color VERDE se encuentran disponibles.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.greenAccent.shade100,
+                            fontSize: 14,
+                            letterSpacing: 0.7,
+                          ),
                         ),
                       ),
-                      const Gap(15),
+                      const Gap(10),
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(
+                                    color: Colors.redAccent.shade100))),
+                        child: Text(
+                          "Los cajones de color ROJO se encuentran ocupados.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.redAccent.shade100,
+                            fontSize: 14,
+                            letterSpacing: 0.7,
+                          ),
+                        ),
+                      ),
                       const Gap(40),
                       Text(
                         "Disponibilidad Estacionamiento 1",
                         style: TextStyle(
-                          color: Colors.blue.shade900,
+                          color: Colors.amber.shade100,
                           fontWeight: FontWeight.w800,
                           fontSize: 18,
                           letterSpacing: 0.7,
@@ -70,11 +94,11 @@ class _DisponibilidadScreenState extends State<DisponibilidadScreen> {
                       ),
                       const SizedBox(height: 15),
                       Container(
-                        height: 200,
+                        height: 140,
                         width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: Colors.purple.shade900,
+                            color: Colors.grey.shade400,
                             width: 4,
                           ),
                           borderRadius: const BorderRadius.all(
@@ -106,13 +130,13 @@ class _DisponibilidadScreenState extends State<DisponibilidadScreen> {
                       ),
                     ],
                   ),
-                  const Gap(30),
+                  const Gap(40),
                   Column(
                     children: [
                       Text(
                         "Disponibilidad Estacionamiento 2",
                         style: TextStyle(
-                          color: Colors.blue.shade900,
+                          color: Colors.amber.shade100,
                           fontWeight: FontWeight.w800,
                           fontSize: 18,
                           letterSpacing: 0.7,
@@ -120,11 +144,11 @@ class _DisponibilidadScreenState extends State<DisponibilidadScreen> {
                       ),
                       const SizedBox(height: 15),
                       Container(
-                        height: 200,
+                        height: 140,
                         width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: Colors.purple.shade900,
+                            color: Colors.grey.shade400,
                             width: 4,
                           ),
                           borderRadius: const BorderRadius.all(
@@ -156,13 +180,13 @@ class _DisponibilidadScreenState extends State<DisponibilidadScreen> {
                       ),
                     ],
                   ),
-                  const Gap(30),
+                  const Gap(40),
                   Column(
                     children: [
                       Text(
                         "Disponibilidad Estacionamiento 3",
                         style: TextStyle(
-                          color: Colors.blue.shade900,
+                          color: Colors.amber.shade100,
                           fontWeight: FontWeight.w800,
                           fontSize: 18,
                           letterSpacing: 0.7,
@@ -170,11 +194,11 @@ class _DisponibilidadScreenState extends State<DisponibilidadScreen> {
                       ),
                       const SizedBox(height: 15),
                       Container(
-                        height: 200,
+                        height: 140,
                         width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: Colors.purple.shade900,
+                            color: Colors.grey.shade400,
                             width: 4,
                           ),
                           borderRadius: const BorderRadius.all(
@@ -217,7 +241,7 @@ class _DisponibilidadScreenState extends State<DisponibilidadScreen> {
 
   GestureDetector _buildCajon(BuildContext context, String cajonNombre) {
     final disponible = _cajonesDisponibles[cajonNombre] ?? false;
-    Color color = disponible ? Colors.green.shade700 : Colors.red.shade900;
+    Color color = disponible ? Colors.green.shade400 : Colors.red.shade400;
     return GestureDetector(
       onTap: () {
         if (disponible) {
@@ -232,10 +256,10 @@ class _DisponibilidadScreenState extends State<DisponibilidadScreen> {
         decoration: BoxDecoration(
           border: Border.all(
             color: color,
-            width: 4,
+            width: 3,
           ),
           borderRadius: const BorderRadius.all(
-            Radius.circular(5),
+            Radius.circular(20),
           ),
         ),
         child: Column(
@@ -252,6 +276,7 @@ class _DisponibilidadScreenState extends State<DisponibilidadScreen> {
               cajonNombre,
               style: TextStyle(
                 color: color,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ],

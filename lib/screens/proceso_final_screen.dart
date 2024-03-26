@@ -62,7 +62,6 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
   int _seconds = 0;
   bool isRunning = false;
   bool showTotalPrice = false;
-  final bool _showTotalPrice = false;
 
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
@@ -131,7 +130,7 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
-        backgroundColor: Colors.black87,
+        backgroundColor: Colors.black,
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
@@ -148,7 +147,7 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
                         ElevatedButton.icon(
                           style: const ButtonStyle(
                               backgroundColor:
-                                  MaterialStatePropertyAll(Colors.black)),
+                                  MaterialStatePropertyAll(Colors.white)),
                           onPressed: () {
                             Navigator.push(
                                 context,
@@ -158,12 +157,14 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
                           },
                           label: const Text(
                             'Mostrar Mapa',
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w700),
                           ),
                           icon: const Icon(
                             Icons.remove_red_eye_outlined,
-                            size: 20,
-                            color: Colors.white,
+                            size: 25,
+                            color: Colors.black87,
                           ),
                         ),
                         const Gap(5),
@@ -171,7 +172,7 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
                           onTap: () => showInfoViewMap(context),
                           child: Icon(
                             Icons.info_outlined,
-                            color: Colors.red.shade900,
+                            color: Colors.redAccent.shade100,
                             size: 40,
                           ),
                         ),
@@ -179,7 +180,7 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
                     ),
                     const Gap(5),
                     Divider(
-                      color: Colors.grey.shade400,
+                      color: Colors.red.shade50,
                       thickness: 2,
                     ),
                     const Gap(20),
@@ -187,14 +188,22 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
                       "El Temporizador y Precio acumulado se inician de manera automática a partir de que fue seleccionado el cajón de estacionamiento.",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Colors.red.shade900,
+                        color: Colors.red.shade100,
                         fontWeight: FontWeight.w700,
                         fontSize: 18,
                         letterSpacing: 0.7,
                       ),
                     ),
                     const Gap(20),
-
+                    Text(
+                      "El precio por minuto para la estancia dentro del cajón de estacionamiento es de 20¢.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.grey.shade400,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const Gap(20),
                     Text(
                       'Precio Acumulado: \$${_calculatePrice().toStringAsFixed(2)}',
                       style: const TextStyle(fontSize: 20),
@@ -204,34 +213,50 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
                       'Tiempo Transcurrido: ${_formatTime(_seconds)}',
                       style: const TextStyle(fontSize: 20),
                     ),
-                    const Gap(30),
+                    const Gap(40),
                     const Text(
                       textAlign: TextAlign.center,
-                      'Para terminar la estancia y proceder al pago, presiona el botón "Terminar y Pagar".',
-                      style: TextStyle(color: Colors.black, fontSize: 12),
+                      'Para terminar la estancia y mostrar el "Precio Total" dentro del tricket, presiona el botón "Terminar y Pagar".',
+                      style: TextStyle(color: Colors.white, fontSize: 12),
                     ),
-                    const Gap(10),
-                    if (_showTotalPrice)
-                      Text(
-                        'Precio Total: \$${_calculateTotalPrice().toStringAsFixed(2)}',
-                        style: const TextStyle(fontSize: 20),
-                      ),
+                    const Gap(20),
                     ElevatedButton.icon(
                       style: const ButtonStyle(
                           backgroundColor:
-                              MaterialStatePropertyAll(Colors.black)),
+                              MaterialStatePropertyAll(Colors.white)),
                       onPressed: _stopTimer,
                       label: const Text(
                         'Terminar y Pagar',
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(
+                            color: Colors.black87, fontWeight: FontWeight.w700),
                       ),
                       icon: Icon(
-                        Icons.monetization_on_sharp,
-                        color: Colors.green.shade50,
+                        Icons.monetization_on_outlined,
+                        color: Colors.greenAccent.shade700,
                       ),
                     ),
-                    const Gap(20),
-
+                    const Gap(25),
+                    if (showTotalPrice)
+                      ElevatedButton.icon(
+                        style: const ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.white),
+                        ),
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.monetization_on_sharp,
+                          color: Colors.greenAccent.shade700,
+                          size: 25,
+                        ),
+                        label: const Text(
+                          "Pagar En Linea",
+                          style: TextStyle(
+                              fontSize: 25,
+                              color: Colors.black87,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    const Gap(25),
                     // const SizedBox(height: 10),
                     // ElevatedButton(
                     //   onPressed: _resetTimer,
@@ -241,8 +266,8 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
                 ),
               ),
               TicketWidget(
-                color: Colors.red.shade50,
-                width: MediaQuery.of(context).size.width - 100,
+                color: Colors.white,
+                width: MediaQuery.of(context).size.width - 50,
                 height: MediaQuery.of(context).size.height,
                 isCornerRounded: true,
                 padding: const EdgeInsets.all(20),
@@ -322,37 +347,17 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
                       ),
                       const Gap(40),
                       if (showTotalPrice)
-                        Column(
-                          children: [
-                            Container(
-                              decoration: const BoxDecoration(
-                                border: Border(
-                                  bottom:
-                                      BorderSide(color: Colors.black, width: 2),
-                                ),
-                              ),
-                              child: Text(
-                                'Precio Total: \$${_calculateTotalPrice().toStringAsFixed(2)}',
-                                style: const TextStyle(fontSize: 20),
-                              ),
+                        Container(
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(color: Colors.black, width: 2),
                             ),
-                            const Gap(25),
-                            ElevatedButton.icon(
-                              style: const ButtonStyle(
-                                backgroundColor:
-                                    MaterialStatePropertyAll(Colors.black),
-                              ),
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.monetization_on_outlined,
-                                color: Colors.white,
-                              ),
-                              label: const Text(
-                                "Pagar En Linea",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ],
+                          ),
+                          child: Text(
+                            'Precio Total: \$${_calculateTotalPrice().toStringAsFixed(2)}',
+                            style: const TextStyle(
+                                color: Colors.black, fontSize: 20),
+                          ),
                         ),
                       Padding(
                         padding: const EdgeInsets.only(
@@ -368,10 +373,9 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
                         ),
                       ),
                       const Padding(
-                        padding:
-                            EdgeInsets.only(top: 10.0, left: 75.0, right: 75.0),
+                        padding: EdgeInsets.only(left: 15, top: 10),
                         child: Text(
-                          'En pagos con efectivo, precios con terminación menor a 50¢ serán redondeados a 0¢, para precios con terminación mayor a 50¢ serán redondeados a la cantidad mayor.',
+                          'Para pagos en efectivo los precios con terminación menor a 50¢ serán redondeados a 0¢, para precios con terminación mayor a 50¢ serán redondeados a la cantidad mayor.',
                           style: TextStyle(
                             color: Colors.black,
                           ),
@@ -382,6 +386,7 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
                           child: Text(
                         '¡ Ten un buen viaje !',
                         style: TextStyle(
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
                       )),

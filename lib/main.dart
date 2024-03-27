@@ -1,3 +1,4 @@
+import 'package:estacionamiento_uaem/api/services/stripe_payment/stripe_keys.dart';
 import 'package:estacionamiento_uaem/firebase_options.dart';
 import 'package:estacionamiento_uaem/login/sign_in_screen.dart';
 import 'package:estacionamiento_uaem/screens/home_screen.dart';
@@ -5,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +18,9 @@ void main() async {
     DeviceOrientation.portraitUp, // Orientación vertical hacia arriba
     DeviceOrientation.portraitDown, // Orientación vertical hacia abajo
   ]);
+  Stripe.publishableKey = ApiKeys.publishableKey;
+  await dotenv.load(fileName: "assets/.env");
+  Stripe.merchantIdentifier = "merchant.identifier";
   runApp(MyApp());
 }
 

@@ -5,7 +5,7 @@ import 'package:estacionamiento_uaem/dto/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:ticket_widget/ticket_widget.dart';
-import 'package:intl/intl.dart'; // Importa el paquete intl
+import 'package:intl/intl.dart';
 
 DateTime now = DateTime.now(); // Obtiene la fecha y hora actual
 
@@ -24,14 +24,6 @@ class ProcesoFinalScreen extends StatefulWidget {
 }
 
 class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
-  String? tipoUsuario;
-  TextEditingController nombrePropietarioController = TextEditingController();
-  TextEditingController matriculaDeControlController = TextEditingController();
-  TextEditingController modeloDelCarroMotoController = TextEditingController();
-  TextEditingController placasDelCarroMotoController = TextEditingController();
-  TextEditingController colorDelCarroMotoController = TextEditingController();
-  TextEditingController telefonoController = TextEditingController();
-
   @override
   void initState() {
     super.initState();
@@ -39,6 +31,14 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
     cargarDatosGuardados();
     cargarTipoUsuario();
   }
+
+  String? tipoUsuario;
+  TextEditingController nombrePropietarioController = TextEditingController();
+  TextEditingController matriculaDeControlController = TextEditingController();
+  TextEditingController modeloDelCarroMotoController = TextEditingController();
+  TextEditingController placasDelCarroMotoController = TextEditingController();
+  TextEditingController colorDelCarroMotoController = TextEditingController();
+  TextEditingController telefonoController = TextEditingController();
 
   Future<void> cargarDatosGuardados() async {
     await SharedPreferencesHelper.loadSavedData(
@@ -87,7 +87,7 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
 
   double _calculateTotalPrice() {
     // Precio por minuto: 20 centavos (0.20 pesos)
-    const pricePerMinute = 0.20;
+    const pricePerMinute = 200.20;
     // Convertir segundos a minutos
     double minutes = _seconds / 60;
     // Calcular precio total
@@ -109,7 +109,7 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
   }
 
   double _calculatePrice() {
-    return (_seconds / 60) * 0.20; // 20¢ por minuto
+    return (_seconds / 60) * 200.20; // 20¢ por minuto
   }
 
   @override
@@ -122,7 +122,6 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.black87,
       extendBodyBehindAppBar: false,
       appBar: AppBar(
         title: const Text(
@@ -205,7 +204,7 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
                     ),
                     const Gap(20),
                     Text(
-                      'Precio Acumulado: \$${_calculatePrice().toStringAsFixed(2)}',
+                      'Precio Acumulado: \$${_calculatePrice().toInt()}',
                       style: const TextStyle(fontSize: 20),
                     ),
                     const Gap(20),
@@ -237,31 +236,31 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
                     ),
                     const Gap(25),
                     if (showTotalPrice)
-                      ElevatedButton.icon(
-                        style: const ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                        ),
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.monetization_on_sharp,
-                          color: Colors.greenAccent.shade700,
-                          size: 25,
-                        ),
-                        label: const Text(
-                          "Pagar En Linea",
-                          style: TextStyle(
-                              fontSize: 25,
-                              color: Colors.black87,
-                              fontWeight: FontWeight.w700),
-                        ),
+                      Column(
+                        children: [
+                          const Gap(10),
+                          ElevatedButton.icon(
+                            style: const ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.white),
+                            ),
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.monetization_on_sharp,
+                              color: Colors.greenAccent.shade700,
+                              size: 25,
+                            ),
+                            label: const Text(
+                              "Pagar En Linea",
+                              style: TextStyle(
+                                  fontSize: 25,
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.w700),
+                            ),
+                          ),
+                        ],
                       ),
                     const Gap(25),
-                    // const SizedBox(height: 10),
-                    // ElevatedButton(
-                    //   onPressed: _resetTimer,
-                    //   child: const Text('Reiniciar'),
-                    // ),
                   ],
                 ),
               ),
@@ -335,7 +334,7 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
                                 'Placas',
                                 placasDelCarroMotoController.text,
                                 'Hora/Salida  ',
-                                horaDeSalida), // Añadir hora de salida aquí
+                                horaDeSalida),
                             const Gap(20),
                             ticketDetailsWidget(
                                 'Modelo Au/Mo',
@@ -354,7 +353,7 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
                             ),
                           ),
                           child: Text(
-                            'Precio Total: \$${_calculateTotalPrice().toStringAsFixed(2)}',
+                            'Precio Total: \$${_calculateTotalPrice().toInt()}',
                             style: const TextStyle(
                                 color: Colors.black, fontSize: 20),
                           ),

@@ -26,11 +26,16 @@ if (flutterVersionName == null) {
 android {
     namespace "com.example.estacionamiento_uaem"
     compileSdkVersion 34
-    ndkVersion "26.1.10909125"
+    // ndkVersion "26.1.10909125"
+    ndkVersion flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 
     sourceSets {
@@ -66,4 +71,5 @@ dependencies {
     implementation "com.google.firebase:firebase-analytics" 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version" 
+    implementation 'com.android.support:multidex:1.0.3'
 }

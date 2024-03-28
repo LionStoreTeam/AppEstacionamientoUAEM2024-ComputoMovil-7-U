@@ -35,7 +35,7 @@ class MapEstacionamientoState extends State<MapEstacionamiento> {
         ),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.red.shade700,
+        backgroundColor: Colors.black87,
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -61,6 +61,7 @@ class MapEstacionamientoState extends State<MapEstacionamiento> {
         onPressed: _goToEstacionamientoUAEM,
         label: const Text('Ver Estacionamiento'),
         icon: const Icon(Icons.remove_red_eye_outlined),
+        backgroundColor: Colors.black87,
       ),
     );
   }

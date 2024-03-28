@@ -1,11 +1,37 @@
 import 'dart:async';
 
+import 'package:connectivity/connectivity.dart';
 import 'package:estacionamiento_uaem/api/map.dart';
+import 'package:estacionamiento_uaem/api/services/stripe_payment/stripe_manager.dart';
 import 'package:estacionamiento_uaem/dto/shared_preferences_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
 import 'package:ticket_widget/ticket_widget.dart';
 import 'package:intl/intl.dart';
+
+// Clase para representar una opción en el DropdownButton
+class DropdownOption {
+  final String text;
+  final String price;
+  final int timerDuration;
+
+  DropdownOption(this.text, this.price, this.timerDuration);
+
+  // Sobrescribir el operador == para comparar las opciones de forma adecuada
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is DropdownOption &&
+        other.text == text &&
+        other.price == price &&
+        other.timerDuration == timerDuration;
+  }
+
+  // Sobrescribir el hashCode para que sea coherente con el operador ==
+  @override
+  int get hashCode => text.hashCode ^ price.hashCode ^ timerDuration.hashCode;
+}
 
 DateTime now = DateTime.now(); // Obtiene la fecha y hora actual
 
@@ -24,10 +50,15 @@ class ProcesoFinalScreen extends StatefulWidget {
 }
 
 class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
+  DropdownOption? _selectedOption;
+  late Timer _timer;
+  int _secondsRemaining = 0;
+  bool _dropdownEnabled = true;
+  bool paymentProcessing = false;
   @override
   void initState() {
     super.initState();
-    _startTimer();
+    _timer = Timer.periodic(const Duration(seconds: 1), _updateTimer);
     cargarDatosGuardados();
     cargarTipoUsuario();
   }
@@ -58,59 +89,6 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
   }
 
   // INICIO Sección de métodos para el temporizador y el precio
-  late Timer _timer;
-  int _seconds = 0;
-  bool isRunning = false;
-  bool showTotalPrice = false;
-
-  void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-      setState(() {
-        _seconds++;
-      });
-    });
-    setState(() {
-      isRunning = true;
-    });
-  }
-
-  void _stopTimer() {
-    if (_timer.isActive) {
-      _timer.cancel();
-      setState(() {
-        showTotalPrice = true;
-        horaDeSalida = DateFormat.Hms()
-            .format(DateTime.now()); // Actualiza la hora de salida
-      });
-    }
-  }
-
-  double _calculateTotalPrice() {
-    // Precio por minuto: 20 centavos (0.20 pesos)
-    const pricePerMinute = 200.20;
-    // Convertir segundos a minutos
-    double minutes = _seconds / 60;
-    // Calcular precio total
-    double totalPrice = minutes * pricePerMinute;
-    return totalPrice;
-  }
-
-  String _formatTime(int time) {
-    String formattedTime = '';
-
-    int hours = time ~/ 3600;
-    int minutes = (time % 3600) ~/ 60;
-    int seconds = time % 60;
-
-    formattedTime =
-        '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
-
-    return formattedTime;
-  }
-
-  double _calculatePrice() {
-    return (_seconds / 60) * 200.20; // 20¢ por minuto
-  }
 
   @override
   void dispose() {
@@ -119,8 +97,93 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
   }
   // FIN Sección de métodos para el temporizador y el precio
 
+// ------
+
+  void _updateTimer(Timer timer) {
+    if (_secondsRemaining > 0) {
+      setState(() {
+        _secondsRemaining--;
+      });
+    } else {
+      setState(() {
+        _dropdownEnabled =
+            true; // Habilita el DropdownButton cuando el temporizador termina
+      });
+    }
+  }
+
+  void _startTimer(int duration) {
+    setState(() {
+      _secondsRemaining = duration;
+      _dropdownEnabled =
+          false; // Deshabilita el DropdownButton cuando se inicia el temporizador
+    });
+  }
+
+  void _handlePagoPressed() {
+    // Realizar alguna acción al presionar el botón "Pagar"
+    setState(() {
+      horaDeSalida = DateFormat.Hms().format(DateTime.now());
+    });
+  }
+
+  String getFormattedTime() {
+    int hours = _secondsRemaining ~/ 3600;
+    int minutes = (_secondsRemaining % 3600) ~/ 60;
+    int seconds = _secondsRemaining % 60;
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  Future<void> showToast(String message) async {
+    await Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.black,
+      textColor: Colors.white,
+    );
+  }
+
+  Future<void> handlePayment(
+      Future<void> Function(BuildContext) paymentFunction) async {
+    // Validar el monto aquí
+    if (paymentProcessing) {
+      showToast('Pantalla de cobro en proceso');
+      return;
+    }
+
+    setState(() {
+      paymentProcessing = true;
+    });
+
+    try {
+      await paymentFunction(context);
+    } finally {
+      setState(() {
+        paymentProcessing = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    String formattedTime = getFormattedTime();
+    // Define las opciones del DropdownButton
+    List<DropdownOption> dropdownOptions = [
+      DropdownOption('1 hora', '12', 10),
+      DropdownOption('2 horas', '24', 2 * 60 * 60),
+      DropdownOption('3 horas', '36', 3 * 60 * 60),
+      DropdownOption('4 hora', '48', 4 * 60 * 60),
+      DropdownOption('5 horas', '60', 5 * 60 * 60),
+      DropdownOption('6 horas', '72', 6 * 60 * 60),
+      DropdownOption('7 hora', '84', 7 * 60 * 60),
+      DropdownOption('8 horas', '96', 8 * 60 * 60),
+      DropdownOption('9 horas', '108', 9 * 60 * 60),
+      DropdownOption('10 hora', '120', 10 * 60 * 60),
+      DropdownOption('11 horas', '132', 11 * 60 * 60),
+      DropdownOption('12 horas', '144', 12 * 60 * 60),
+    ];
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: AppBar(
@@ -184,7 +247,7 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
                     ),
                     const Gap(20),
                     Text(
-                      "El Temporizador y Precio acumulado se inician de manera automática a partir de que fue seleccionado el cajón de estacionamiento.",
+                      "Para iniciar debes seleccionar el número de horas que deseas reservar el cajón de estacionamiento.",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.red.shade100,
@@ -195,72 +258,129 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
                     ),
                     const Gap(20),
                     Text(
-                      "El precio por minuto para la estancia dentro del cajón de estacionamiento es de 20¢.",
+                      "El precio por hora para la estancia dentro del cajón de estacionamiento es de \$12.",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.grey.shade400,
                         fontSize: 14,
                       ),
                     ),
-                    const Gap(20),
+                    const Gap(5),
+                    Divider(
+                      color: Colors.grey.shade700,
+                      thickness: 1,
+                    ),
+                    const Gap(30),
                     Text(
-                      'Precio Acumulado: \$${_calculatePrice().toInt()}',
-                      style: const TextStyle(fontSize: 20),
+                      "Puedes elegir cómo mínimo 1 hora y máximo 12 horas de disponibilidad.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.grey.shade400,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const Gap(30),
+                    Text(
+                      "Después de seleccionar la cantidad de horas deseadas se mostrara el botón para realizar pagos en línea.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 12,
+                      ),
                     ),
                     const Gap(20),
-                    Text(
-                      'Tiempo Transcurrido: ${_formatTime(_seconds)}',
-                      style: const TextStyle(fontSize: 20),
+                    DropdownButton<DropdownOption>(
+                      hint: const Text('Cantidad Horas'),
+                      value: _selectedOption,
+                      onChanged: _dropdownEnabled
+                          ? (DropdownOption? newValue) {
+                              setState(() {
+                                _selectedOption = newValue;
+                                // Inicia el temporizador cuando se selecciona una opción
+                                _startTimer(newValue!.timerDuration);
+                              });
+                            }
+                          : null, // Deshabilita el DropdownButton si _dropdownEnabled es false
+                      items: dropdownOptions.map((option) {
+                        return DropdownMenuItem<DropdownOption>(
+                          value: option,
+                          child: Text(option.text),
+                        );
+                      }).toList(),
                     ),
+                    const SizedBox(height: 20),
+                    Container(
+                      width: MediaQuery.of(context).size.width - 90,
+                      height: 40,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Colors.transparent,
+                          border: Border.all(color: Colors.redAccent.shade700),
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(
+                                blurRadius: 3,
+                                blurStyle: BlurStyle.outer,
+                                color: Colors.redAccent.shade100)
+                          ]),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: 3, top: 3, left: 5, right: 5),
+                        child: Center(
+                          child: Text(
+                            'Tiempo restante: $formattedTime',
+                            style: TextStyle(
+                              color: Colors.cyan.shade50,
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Gap(40),
+                    if (_selectedOption != null)
+                      ElevatedButton.icon(
+                          style: ButtonStyle(
+                            side: MaterialStatePropertyAll(
+                                BorderSide(color: Colors.greenAccent.shade700)),
+                            shadowColor: MaterialStatePropertyAll(
+                              Colors.greenAccent.shade100,
+                            ),
+                            elevation: const MaterialStatePropertyAll(1),
+                          ),
+                          onPressed: () async {
+                            var connectivityResult =
+                                await Connectivity().checkConnectivity();
+                            _handlePagoPressed();
+                            if (connectivityResult == ConnectivityResult.none) {
+                              showToast(
+                                  'Es necesario que estés conectado a Internet para realizar una Donación');
+                            } else {
+                              handlePayment(
+                                (context) =>
+                                    StripePaymentHandle30MXN.stripeMakePayment(
+                                  context,
+                                  _selectedOption!.price,
+                                ),
+                              );
+                            }
+                          },
+                          icon: Icon(
+                            Icons.monetization_on,
+                            color: Colors.greenAccent.shade700,
+                          ),
+                          label: const Text(
+                            "Pagar en línea",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          )),
                     const Gap(40),
                     const Text(
                       textAlign: TextAlign.center,
-                      'Para terminar la estancia y mostrar el "Precio Total" dentro del tricket, presiona el botón "Terminar y Pagar".',
+                      'Una vez seleccionada la cantidad de horas el "Precio Total" se mostrará en la parte final de su Ticket.',
                       style: TextStyle(color: Colors.white, fontSize: 12),
                     ),
                     const Gap(20),
-                    ElevatedButton.icon(
-                      style: const ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white)),
-                      onPressed: _stopTimer,
-                      label: const Text(
-                        'Terminar y Pagar',
-                        style: TextStyle(
-                            color: Colors.black87, fontWeight: FontWeight.w700),
-                      ),
-                      icon: Icon(
-                        Icons.monetization_on_outlined,
-                        color: Colors.greenAccent.shade700,
-                      ),
-                    ),
-                    const Gap(25),
-                    if (showTotalPrice)
-                      Column(
-                        children: [
-                          const Gap(10),
-                          ElevatedButton.icon(
-                            style: const ButtonStyle(
-                              backgroundColor:
-                                  MaterialStatePropertyAll(Colors.white),
-                            ),
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.monetization_on_sharp,
-                              color: Colors.greenAccent.shade700,
-                              size: 25,
-                            ),
-                            label: const Text(
-                              "Pagar En Linea",
-                              style: TextStyle(
-                                  fontSize: 25,
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                        ],
-                      ),
-                    const Gap(25),
                   ],
                 ),
               ),
@@ -345,19 +465,18 @@ class _ProcesoFinalScreenState extends State<ProcesoFinalScreen> {
                         ),
                       ),
                       const Gap(40),
-                      if (showTotalPrice)
-                        Container(
-                          decoration: const BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(color: Colors.black, width: 2),
-                            ),
-                          ),
-                          child: Text(
-                            'Precio Total: \$${_calculateTotalPrice().toInt()}',
-                            style: const TextStyle(
-                                color: Colors.black, fontSize: 20),
+                      Container(
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(color: Colors.black, width: 2),
                           ),
                         ),
+                        child: Text(
+                          'Precio Total: ${_selectedOption != null ? '\$${_selectedOption!.price}' : 'Seleccione una opción'}',
+                          style: const TextStyle(
+                              color: Colors.black, fontSize: 20),
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(
                             top: 50.0, left: 30.0, right: 30.0),

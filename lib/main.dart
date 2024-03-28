@@ -38,6 +38,9 @@ class MyApp extends StatelessWidget {
             theme: ThemeData.dark(useMaterial3: true),
             debugShowCheckedModeBanner: false,
             home: AuthenticationWrapper(),
+            routes: <String, WidgetBuilder>{
+              '/home': (BuildContext context) => const HomeScreen(),
+            },
           );
         }
 

@@ -238,6 +238,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const Gap(30),
+
+              Text(
+                "Para poder ingresar y seleccionar un cajón de estacionamiento es necesario que se registre y/o verifique siempre sus datos y los del Vehículo/Motocicleta.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.grey.shade400,
+                  fontSize: 14,
+                ),
+              ),
+              Divider(
+                color: Colors.grey.shade700,
+                thickness: 1,
+              ),
+              const Gap(30),
               Text(
                 textAlign: TextAlign.center,
                 "Seleccione el tipo de usuario de acuerdo a su perfil.",
@@ -370,7 +384,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Container(
                   width: 180,
                   decoration: BoxDecoration(
-                    color: datosGuardados == false ? Colors.grey : Colors.white,
+                    color: datosGuardados == false
+                        ? Colors.grey.shade800
+                        : Colors.white,
                     borderRadius: const BorderRadius.all(
                       Radius.circular(30),
                     ),

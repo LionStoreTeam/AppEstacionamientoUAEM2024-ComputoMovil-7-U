@@ -98,16 +98,20 @@ void showPaymentResultDialog(ContextHolder contextHolder,
     {required bool success}) {
   String title = success ? 'Tikcet Pagado!' : '¡Falló el Pago!';
   String message = success
-      ? 'El pago se realizó con éxito.'
-      : 'No se completó de manera correcta el pago. Puedes volver a intentarlo de nuevo.';
+      ? 'El pago se realizó con éxito.\nSerás redirigido a la pantalla de inicio.\nGracias por tu visita. ☺'
+      : 'No se completó de manera correcta el pago.\nSi deseas puedes pagar en ventanilla.\nSerás redirigido a la pantalla de inicio.';
 
   QuickAlert.show(
+    barrierDismissible: false,
     context: contextHolder.context,
     type: success ? QuickAlertType.success : QuickAlertType.error,
     title: title,
     text: message,
     confirmBtnText: 'De Acuerdo',
-    confirmBtnColor: Colors.purple.shade900,
+    confirmBtnColor: Colors.black,
     backgroundColor: Colors.white,
+    onConfirmBtnTap: () {
+      Navigator.popAndPushNamed(contextHolder.context, '/home');
+    },
   );
 }
